@@ -1,9 +1,9 @@
 package main
 
 import (
-	"mathing/internal/lib"
+	"mathing/internal/models"
 )
 
 func main() {
-	lib.Repl()
+	models.Repl()
 }

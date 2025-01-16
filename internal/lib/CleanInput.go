@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func cleanInput(text string) ([]string, error) {
+func CleanInput(text string) ([]string, error) {
 	if text == "" {
 		return nil, fmt.Errorf("input string cannot be empty")
 	}
