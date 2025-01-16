@@ -31,6 +31,8 @@ var (
 		Italic(true).
 		Foreground(lipgloss.Color(bg)).
 		Background(lipgloss.Color(orange)).
-		Padding(0, 1).
-		Margin(0, 1)
+		Padding(0, 1)
+  hintStyle = lipgloss.NewStyle().
+    Italic(true).
+    Foreground(lipgloss.Color(bg3))
 )
