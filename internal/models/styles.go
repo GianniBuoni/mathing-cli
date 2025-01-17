@@ -28,6 +28,7 @@ const (
 
 var (
 	promptStyle = lipgloss.NewStyle().
+    Bold(true).
 		Italic(true).
 		Foreground(lipgloss.Color(bg)).
 		Background(lipgloss.Color(orange)).
@@ -35,4 +36,7 @@ var (
   hintStyle = lipgloss.NewStyle().
     Italic(true).
     Foreground(lipgloss.Color(bg3))
+  highlightStyle = lipgloss.NewStyle().
+    Bold(true).
+    Foreground(lipgloss.Color(pink))
 )
