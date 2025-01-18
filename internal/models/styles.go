@@ -39,4 +39,12 @@ var (
   highlightStyle = lipgloss.NewStyle().
     Bold(true).
     Foreground(lipgloss.Color(pink))
+  tableStyle = lipgloss.NewStyle().
+    Foreground(lipgloss.Color(bg3))
+  headerStyle = lipgloss.NewStyle().
+    Align(lipgloss.Center).
+    Bold(true).
+    Foreground(lipgloss.Color(fg2))
+  normalStyle = lipgloss.NewStyle().
+    Foreground(lipgloss.Color(fg))
 )
