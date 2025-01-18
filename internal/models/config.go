@@ -1,6 +1,10 @@
 package models
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"mathing/internal/store"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type state uint
 
@@ -12,19 +16,25 @@ const (
 type config struct {
 	state     state
 	prompt    func() string
+	store     *store.Queries
 	subModels map[state]tea.Model
 }
 
-func NewConfig() config {
+func NewConfig(storeQueries *store.Queries) (config, error) {
 	c := config{
 		state:     mainMenu,
 		prompt:    prompt,
+		store:     storeQueries,
 		subModels: map[state]tea.Model{},
 	}
 	for k, v := range getSubModels() {
-		c.subModels[k] = v.init(&c)
+		var err error
+		c.subModels[k], err = v.init(&c)
+		if err != nil {
+			return config{}, err
+		}
 	}
-	return c
+	return c, nil
 }
 
 func (c config) Init() tea.Cmd {

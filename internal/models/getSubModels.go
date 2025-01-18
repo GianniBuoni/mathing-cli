@@ -5,7 +5,7 @@ import tea "github.com/charmbracelet/bubbletea"
 type subModel struct {
 	name        string
 	description string
-	init        func(*config) tea.Model
+	init        func(*config) (tea.Model, error)
 }
 
 func getSubModels() map[state]subModel {

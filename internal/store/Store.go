@@ -12,25 +12,16 @@ import (
 //go:embed sqlc/schema.sql
 var ddl string
 
-type Store struct {
-	Ctx     *context.Context
-	Queries *Queries
-}
-
-func NewStore(ctx *context.Context) (Store, error) {
+func NewStore() (*Queries, error) {
+	ctx := context.Background()
 	conn, err := sql.Open("sqlite3", "./data.db")
 	if err != nil {
-		return Store{}, fmt.Errorf("issue connecting to db: %w", err)
+		return nil, fmt.Errorf("issue connecting to db: %w", err)
 	}
 
-	if _, err = conn.ExecContext(*ctx, ddl); err != nil {
-		return Store{}, fmt.Errorf("issue creating tables: %w", err)
+	if _, err = conn.ExecContext(ctx, ddl); err != nil {
+		return nil, fmt.Errorf("issue creating tables: %w", err)
 	}
+	return New(conn), nil
 
-	queries := New(conn)
-
-	return Store{
-		Ctx:     ctx,
-		Queries: queries,
-	}, nil
 }
