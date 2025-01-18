@@ -6,13 +6,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type state uint
-
-const (
-	mainMenu state = iota
-	receipt
-)
-
 type config struct {
 	state     state
 	prompt    func() string

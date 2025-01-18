@@ -2,23 +2,32 @@ package models
 
 import tea "github.com/charmbracelet/bubbletea"
 
+type state uint
+
+const (
+	mainMenu state = iota
+	receipt
+	newReceipt
+	items
+	newItem
+)
+
 type subModel struct {
 	name        string
-	description string
+	prompt string
 	init        func(*config) (tea.Model, error)
+	callback    func() error
 }
 
 func getSubModels() map[state]subModel {
 	return map[state]subModel{
 		mainMenu: {
 			name:        "main menu",
-			description: "Choose an action to perform!",
-			init:        newMainMenu,
+			prompt: "Choose an action to perform!",
 		},
 		receipt: {
 			name:        "receipt",
-			description: "Current items to be calced",
-			init:        newReceipt,
+			prompt: "Current items to be calced",
 		},
 	}
 }
