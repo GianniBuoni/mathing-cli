@@ -21,7 +21,7 @@ func main() {
 		log.Fatalf("issue initializing model config: %v\n", err)
 	}
 
-	p := tea.NewProgram(config)
+	p := tea.NewProgram(&config)
 	if _, err := p.Run(); err != nil {
 		log.Fatalf("could not load program %v\n", err)
 		os.Exit(1)

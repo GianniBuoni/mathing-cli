@@ -6,43 +6,55 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type config struct {
-	state     state
-	prompt    func() string
-	store     *store.Queries
-	subModels map[state]tea.Model
-}
-
 func NewConfig(storeQueries *store.Queries) (config, error) {
+  models := map[state]tea.Model{}
+
+  for k, v := range getIndex() {
+    models[k] = v.init()
+  }
+
 	c := config{
-		state:     mainMenu,
-		prompt:    prompt,
-		store:     storeQueries,
-		subModels: map[state]tea.Model{},
+		store: storeQueries,
+    currentModel: mainMenu,
+    allModels: models,
 	}
-	for k, v := range getSubModels() {
-		var err error
-		c.subModels[k], err = v.init(&c)
-		if err != nil {
-			return config{}, err
-		}
-	}
+
 	return c, nil
 }
 
-func (c config) Init() tea.Cmd {
+func (c *config) Init() tea.Cmd {
 	return nil
 }
 
-func (c config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	d, cmd := c.subModels[c.state].Update(msg)
-	return d, cmd
+func (c *config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c":
+			return c, tea.Quit
+		}
+	}
+
+	return c, nil
 }
 
-func (c config) View() string {
-	return c.subModels[c.state].View()
+func (c *config) View() string {
+	s := c.prompt()
+
+  current, exists := c.allModels[c.currentModel]
+  if !exists {
+    return s + c.footer()
+  }
+
+  s += current.View() + c.footer()
+
+	return s
 }
 
-func prompt() string {
+func (c *config) prompt() string {
 	return "\n" + promptStyle.Render("MATHEMATICAL!!") + "\n\n"
+}
+
+func (c *config) footer() string {
+  return "\n\n" + hintStyle.Render("(ctrl+c) - Exit")
 }
