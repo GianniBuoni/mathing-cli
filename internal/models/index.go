@@ -8,6 +8,7 @@ type state uint
 
 const (
 	mainMenu state = iota
+	listReceipt
 	listItems
 )
 
@@ -24,6 +25,13 @@ func getIndex() map[state]subModelInfo {
 			description: "Select an action to perform.",
 			init:        NewMainMenu,
 		},
+
+		listReceipt: {
+			title:       "List Receipt",
+			description: "View, edit, or calc the current receipt",
+			init:        NewReceipt,
+		},
+
 		listItems: {
 			title:       "List Items",
 			description: "View or edit items in the database.",
