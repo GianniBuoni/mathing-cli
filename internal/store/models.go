@@ -15,11 +15,10 @@ type Item struct {
 }
 
 type Receipt struct {
-	ID         int64
-	ItemQty    sql.NullInt64
-	ItemID     sql.NullInt64
-	Constraint interface{}
-	UserID     sql.NullInt64
+	ID      int64
+	ItemQty sql.NullInt64
+	ItemID  sql.NullInt64
+	UserID  sql.NullInt64
 }
 
 type User struct {

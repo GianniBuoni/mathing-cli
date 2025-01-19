@@ -40,7 +40,7 @@ func (q *Queries) DeletReceiptItem(ctx context.Context, id int64) error {
 }
 
 const listReceipt = `-- name: ListReceipt :many
-SELECT id, item_qty, item_id, "constraint", user_id FROM receipt
+SELECT id, item_qty, item_id, user_id FROM receipt
 `
 
 func (q *Queries) ListReceipt(ctx context.Context) ([]Receipt, error) {
@@ -56,7 +56,6 @@ func (q *Queries) ListReceipt(ctx context.Context) ([]Receipt, error) {
 			&i.ID,
 			&i.ItemQty,
 			&i.ItemID,
-			&i.Constraint,
 			&i.UserID,
 		); err != nil {
 			return nil, err

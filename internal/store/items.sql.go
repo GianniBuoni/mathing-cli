@@ -39,7 +39,7 @@ func (q *Queries) DeleteItem(ctx context.Context, id int64) error {
 }
 
 const listItems = `-- name: ListItems :many
-SELECT id, item, price FROM items
+SELECT id, item, price FROM items LIMIT 20
 `
 
 func (q *Queries) ListItems(ctx context.Context) ([]Item, error) {
