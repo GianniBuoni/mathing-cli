@@ -43,7 +43,7 @@ func FetchListItems(
 	}
 
 	for _, v := range choices {
-		row := []string{v.Item, fmt.Sprintf("%.2f", v.Price)}
+		row := []string{v.Item, fmt.Sprintf("%05.2f", v.Price)}
 		content = append(content, row)
 		items = append(items, int(v.ID))
 	}

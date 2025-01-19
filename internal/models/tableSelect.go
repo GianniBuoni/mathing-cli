@@ -21,7 +21,8 @@ type tableSelect[T any] struct {
 }
 
 func (t *tableSelect[T]) View() string {
-	s := table.New().Border(lipgloss.NormalBorder()).BorderStyle(tableStyle).StyleFunc(
+	// body
+	u := table.New().Border(lipgloss.NormalBorder()).BorderStyle(tableStyle).StyleFunc(
 		func(row, col int) lipgloss.Style {
 			switch {
 			case row == table.HeaderRow:
@@ -32,7 +33,25 @@ func (t *tableSelect[T]) View() string {
 				return normalStyle.Margin(0, 1)
 			}
 		}).Rows(t.content...).Headers(t.headers...)
-	return fmt.Sprint(s) + "\n" + fmt.Sprintf("%d", t.itemOffset)
+
+	s := fmt.Sprint(u)
+
+	if t.itemCount > 0 {
+		// pagination
+		pageNumbers := t.itemCount/20 + 1
+		currentPage := t.itemOffset/20 + 1
+		pagination := hintStyle.Margin(0, 1).Render(fmt.Sprintf("Page %02d of %02d", currentPage, pageNumbers))
+		s += "\n" + pagination
+
+		// item count
+		countString := hintStyle.Render(fmt.Sprintf("Count: %d items", t.itemCount))
+		s += countString
+
+		// key bindings
+		s += "\n\n" + hintStyle.Render("(h) - Previous Page, (l) - Next page")
+	}
+
+	return s
 }
 
 func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -46,7 +65,7 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "down", "j":
-			if len(t.content) != 1 && t.selected < len(t.content) {
+			if t.selected < len(t.content) - 1 {
 				t.selected++
 			}
 
@@ -60,10 +79,7 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if (t.itemOffset + 20) <= t.itemCount {
 				t.itemOffset += 20
 
-				t.content, t.items, _ = t.refetchFunc(
-					t.store,
-					t.itemOffset,
-				)
+				t.content, t.items, _ = t.refetchFunc(t.store, t.itemOffset)
 			}
 		}
 

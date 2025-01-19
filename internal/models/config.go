@@ -90,5 +90,5 @@ func (c *config) prompt() string {
 }
 
 func (c *config) footer() string {
-	return "\n\n" + hintStyle.Render("(ctrl+c) - Exit")
+	return "\n" + hintStyle.Render("(ctrl+c) - Exit, (esc) - Back")
 }
