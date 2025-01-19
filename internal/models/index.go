@@ -10,27 +10,26 @@ type state uint
 
 const (
 	mainMenu state = iota
+	listItems
 )
-
-type config struct {
-	store        *store.Queries
-	allModels    map[state]tea.Model
-	currentModel state
-}
-
 
 type subModelInfo struct {
 	title       string
 	description string
-	init        func() tea.Model
+	init        func(*store.Queries) tea.Model
 }
 
 func getIndex() map[state]subModelInfo {
 	return map[state]subModelInfo{
 		mainMenu: {
 			title:       "Main Menu",
-			description: "Select an action to perform",
+			description: "Select an action to perform.",
 			init:        NewMainMenu,
+		},
+		listItems: {
+			title:       "List Items",
+			description: "View or edit items in the database.",
+			init:        NewListItems,
 		},
 	}
 }
