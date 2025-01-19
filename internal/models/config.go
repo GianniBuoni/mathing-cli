@@ -6,15 +6,22 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type subModel interface {
+	Init() tea.Cmd
+	View() string
+	Update(tea.Msg) (tea.Model, tea.Cmd)
+	NextState() state
+}
+
 type config struct {
 	store         *store.Queries
-	allModels     map[state]tea.Model
+	allModels     map[state]subModel
 	currentModel  state
 	previousModel state
 }
 
 func NewConfig(storeQueries *store.Queries) (config, error) {
-	models := map[state]tea.Model{}
+	models := map[state]subModel{}
 
 	for k, v := range getIndex() {
 		models[k] = v.init(storeQueries)
@@ -22,7 +29,7 @@ func NewConfig(storeQueries *store.Queries) (config, error) {
 
 	c := config{
 		currentModel:  mainMenu,
-		previousModel: listItems,
+		previousModel: mainMenu,
 		allModels:     models,
 	}
 
@@ -52,6 +59,15 @@ func (c *config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	_, cmd := current.Update(msg)
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			c.previousModel = c.currentModel
+			c.currentModel = current.NextState()
+		}
+	}
 
 	return c, cmd
 }

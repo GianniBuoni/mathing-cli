@@ -17,12 +17,15 @@ type tableSelect[T any] struct {
 	items    []T
 }
 
-func NewMainMenu(s *store.Queries) tea.Model {
+func NewMainMenu(s *store.Queries) subModel {
 	content := [][]string{}
 	choices := getIndex()
 	choiceItems := []state{}
 
 	for k, v := range choices {
+		if k == mainMenu {
+			continue
+		}
 		row := []string{v.title, v.description}
 		content = append(content, row)
 		choiceItems = append(choiceItems, k)
@@ -36,7 +39,7 @@ func NewMainMenu(s *store.Queries) tea.Model {
 	}
 }
 
-func NewListItems(s *store.Queries) tea.Model {
+func NewListItems(s *store.Queries) subModel {
 	content := [][]string{}
 	items := []int{}
 
@@ -85,7 +88,7 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "down", "j":
-			if t.selected < len(t.content) {
+			if len(t.content) != 1 && t.selected < len(t.content) {
 				t.selected++
 			}
 		}
@@ -95,4 +98,13 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (t *tableSelect[T]) Init() tea.Cmd {
 	return nil
+}
+
+func (t *tableSelect[T]) NextState() state {
+	switch any(t.items[t.selected]).(type) {
+	case state:
+		return any(t.items[t.selected]).(state)
+	default:
+		return mainMenu
+	}
 }

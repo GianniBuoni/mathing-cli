@@ -2,8 +2,6 @@ package models
 
 import (
 	"mathing/internal/store"
-
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 type state uint
@@ -16,7 +14,7 @@ const (
 type subModelInfo struct {
 	title       string
 	description string
-	init        func(*store.Queries) tea.Model
+	init        func(*store.Queries) subModel
 }
 
 func getIndex() map[state]subModelInfo {
