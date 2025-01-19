@@ -38,6 +38,19 @@ func (q *Queries) DelteUser(ctx context.Context, id int64) error {
 	return err
 }
 
+const getUser = `-- name: GetUser :one
+SELECT id, name, multiplier
+  FROM users
+  WHERE id = ?
+`
+
+func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, id)
+	var i User
+	err := row.Scan(&i.ID, &i.Name, &i.Multiplier)
+	return i, err
+}
+
 const listUsers = `-- name: ListUsers :many
 SELECT id, name, multiplier FROM users
 `

@@ -12,20 +12,20 @@ import (
 
 const createReceiptItem = `-- name: CreateReceiptItem :exec
 INSERT INTO receipt (
-  item_qty, item_id, user_id
+  item_id, item_qty, user_id
 ) VALUES ( ?, ?, ? )
   ON CONFLICT (item_id) DO UPDATE
   SET item_qty = excluded.item_qty, user_id = excluded.user_id
 `
 
 type CreateReceiptItemParams struct {
-	ItemQty sql.NullInt64
 	ItemID  sql.NullInt64
+	ItemQty sql.NullInt64
 	UserID  sql.NullInt64
 }
 
 func (q *Queries) CreateReceiptItem(ctx context.Context, arg CreateReceiptItemParams) error {
-	_, err := q.db.ExecContext(ctx, createReceiptItem, arg.ItemQty, arg.ItemID, arg.UserID)
+	_, err := q.db.ExecContext(ctx, createReceiptItem, arg.ItemID, arg.ItemQty, arg.UserID)
 	return err
 }
 
@@ -40,23 +40,39 @@ func (q *Queries) DeletReceiptItem(ctx context.Context, id int64) error {
 }
 
 const listReceipt = `-- name: ListReceipt :many
-SELECT id, item_qty, item_id, user_id FROM receipt
+SELECT 
+  r.id,
+  i.item as item_name,
+  i.price as item_price,
+  r.item_qty, u.name as payee
+FROM receipt r
+INNER JOIN items i
+INNER JOIN users u
 `
 
-func (q *Queries) ListReceipt(ctx context.Context) ([]Receipt, error) {
+type ListReceiptRow struct {
+	ID        int64
+	ItemName  string
+	ItemPrice float64
+	ItemQty   sql.NullInt64
+	Payee     string
+}
+
+func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
 	rows, err := q.db.QueryContext(ctx, listReceipt)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Receipt
+	var items []ListReceiptRow
 	for rows.Next() {
-		var i Receipt
+		var i ListReceiptRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.ItemName,
+			&i.ItemPrice,
 			&i.ItemQty,
-			&i.ItemID,
-			&i.UserID,
+			&i.Payee,
 		); err != nil {
 			return nil, err
 		}

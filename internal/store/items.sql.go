@@ -49,6 +49,17 @@ func (q *Queries) DeleteItem(ctx context.Context, id int64) error {
 	return err
 }
 
+const getItem = `-- name: GetItem :one
+SELECT id, item, price FROM items WHERE id = ?
+`
+
+func (q *Queries) GetItem(ctx context.Context, id int64) (Item, error) {
+	row := q.db.QueryRowContext(ctx, getItem, id)
+	var i Item
+	err := row.Scan(&i.ID, &i.Item, &i.Price)
+	return i, err
+}
+
 const listItems = `-- name: ListItems :many
 SELECT id, item, price FROM items LIMIT 20 OFFSET ?
 `
