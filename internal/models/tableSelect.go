@@ -1,7 +1,6 @@
 package models
 
 import (
-	"context"
 	"fmt"
 	"mathing/internal/store"
 
@@ -11,55 +10,14 @@ import (
 )
 
 type tableSelect[T any] struct {
-	selected int
-	headers  []string
-	content  [][]string
-	items    []T
-}
-
-func NewMainMenu(s *store.Queries) subModel {
-	content := [][]string{}
-	choices := getIndex()
-	choiceItems := []state{}
-
-	for k, v := range choices {
-		if k == mainMenu {
-			continue
-		}
-		row := []string{v.title, v.description}
-		content = append(content, row)
-		choiceItems = append(choiceItems, k)
-	}
-
-	return &tableSelect[state]{
-		selected: 0,
-		headers:  []string{"MENU", "DESCRIPTION"},
-		content:  content,
-		items:    choiceItems,
-	}
-}
-
-func NewListItems(s *store.Queries) subModel {
-	content := [][]string{}
-	items := []int{}
-
-	choices, err := s.ListItems(context.Background())
-	if err != nil {
-		return nil
-	}
-
-	for _, v := range choices {
-		row := []string{v.Item, fmt.Sprintf("%.2f", v.Price)}
-		content = append(content, row)
-		items = append(items, int(v.ID))
-	}
-
-	return &tableSelect[int]{
-		selected: 0,
-		headers:  []string{"ITEM NAME", "PRICE"},
-		content:  content,
-		items:    items,
-	}
+	selected    int
+	itemOffset  int
+	itemCount   int
+	headers     []string
+	items       []T
+	content     [][]string
+	store       *store.Queries
+	refetchFunc func(*store.Queries, int) ([][]string, []T, int)
 }
 
 func (t *tableSelect[T]) View() string {
@@ -74,7 +32,7 @@ func (t *tableSelect[T]) View() string {
 				return normalStyle.Margin(0, 1)
 			}
 		}).Rows(t.content...).Headers(t.headers...)
-	return fmt.Sprint(s)
+	return fmt.Sprint(s) + "\n" + fmt.Sprintf("%d", t.itemOffset)
 }
 
 func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -91,7 +49,24 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(t.content) != 1 && t.selected < len(t.content) {
 				t.selected++
 			}
+
+		case "left", "h":
+			// refetch here
+			if t.itemOffset >= 20 {
+				t.itemOffset -= 20
+				t.content, t.items, _ = t.refetchFunc(t.store, t.itemOffset)
+			}
+		case "right", "l":
+			if (t.itemOffset + 20) <= t.itemCount {
+				t.itemOffset += 20
+
+				t.content, t.items, _ = t.refetchFunc(
+					t.store,
+					t.itemOffset,
+				)
+			}
 		}
+
 	}
 	return t, nil
 }
