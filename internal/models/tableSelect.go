@@ -65,7 +65,7 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "down", "j":
-			if t.selected < len(t.content) - 1 {
+			if t.selected < len(t.content)-1 {
 				t.selected++
 			}
 
@@ -92,6 +92,9 @@ func (t *tableSelect[T]) Init() tea.Cmd {
 }
 
 func (t *tableSelect[T]) NextState() state {
+	if len(t.items) == 0 {
+		return mainMenu
+	}
 	switch any(t.items[t.selected]).(type) {
 	case state:
 		return any(t.items[t.selected]).(state)

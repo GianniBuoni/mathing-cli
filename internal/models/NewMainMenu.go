@@ -19,7 +19,7 @@ func NewMainMenu(s *store.Queries) subModel {
 	return &tableSelect[state]{
 		selected: 0,
 		headers:  []string{"MENU", "DESCRIPTION"},
-		content:  content,
 		items:    choiceItems,
+		content:  content,
 	}
 }

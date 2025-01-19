@@ -28,23 +28,24 @@ const (
 
 var (
 	promptStyle = lipgloss.NewStyle().
-    Bold(true).
-		Italic(true).
-		Foreground(lipgloss.Color(bg)).
-		Background(lipgloss.Color(orange)).
-		Padding(0, 1)
-  hintStyle = lipgloss.NewStyle().
-    Italic(true).
-    Foreground(lipgloss.Color(bg3))
-  highlightStyle = lipgloss.NewStyle().
-    Bold(true).
-    Foreground(lipgloss.Color(pink))
-  tableStyle = lipgloss.NewStyle().
-    Foreground(lipgloss.Color(bg3))
-  headerStyle = lipgloss.NewStyle().
-    Align(lipgloss.Center).
-    Bold(true).
-    Foreground(lipgloss.Color(fg2))
-  normalStyle = lipgloss.NewStyle().
-    Foreground(lipgloss.Color(fg))
+			Bold(true).
+			Italic(true).
+			Foreground(lipgloss.Color(bg)).
+			Background(lipgloss.Color(orange)).
+			Padding(0, 1)
+	hintStyle = lipgloss.NewStyle().
+			Italic(true).
+			Foreground(lipgloss.Color(bg3))
+	highlightStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color(pink))
+	tableStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(green))
+	headerStyle = lipgloss.NewStyle().
+			Align(lipgloss.Center).
+			Bold(true).
+			Padding(0, 1).
+			Foreground(lipgloss.Color(green))
+	normalStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color(fg))
 )
