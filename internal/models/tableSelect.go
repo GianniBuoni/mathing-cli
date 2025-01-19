@@ -20,25 +20,25 @@ type tableSelect[T any] struct {
 func NewMainMenu(s *store.Queries) tea.Model {
 	content := [][]string{}
 	choices := getIndex()
-  choiceItems := []state{}
+	choiceItems := []state{}
 
 	for k, v := range choices {
 		row := []string{v.title, v.description}
 		content = append(content, row)
-    choiceItems = append(choiceItems, k)
+		choiceItems = append(choiceItems, k)
 	}
 
 	return &tableSelect[state]{
 		selected: 0,
 		headers:  []string{"MENU", "DESCRIPTION"},
 		content:  content,
-    items: choiceItems,
+		items:    choiceItems,
 	}
 }
 
 func NewListItems(s *store.Queries) tea.Model {
 	content := [][]string{}
-  items := []int{}
+	items := []int{}
 
 	choices, err := s.ListItems(context.Background())
 	if err != nil {
@@ -48,14 +48,14 @@ func NewListItems(s *store.Queries) tea.Model {
 	for _, v := range choices {
 		row := []string{v.Item, fmt.Sprintf("%.2f", v.Price)}
 		content = append(content, row)
-    items = append(items, int(v.ID))
+		items = append(items, int(v.ID))
 	}
 
 	return &tableSelect[int]{
 		selected: 0,
 		headers:  []string{"ITEM NAME", "PRICE"},
 		content:  content,
-    items: items,
+		items:    items,
 	}
 }
 

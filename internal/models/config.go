@@ -7,9 +7,10 @@ import (
 )
 
 type config struct {
-	store        *store.Queries
-	allModels    map[state]tea.Model
-	currentModel state
+	store         *store.Queries
+	allModels     map[state]tea.Model
+	currentModel  state
+	previousModel state
 }
 
 func NewConfig(storeQueries *store.Queries) (config, error) {
@@ -20,8 +21,9 @@ func NewConfig(storeQueries *store.Queries) (config, error) {
 	}
 
 	c := config{
-		currentModel: mainMenu,
-		allModels:    models,
+		currentModel:  mainMenu,
+		previousModel: listItems,
+		allModels:     models,
 	}
 
 	return c, nil
@@ -37,6 +39,10 @@ func (c *config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c":
 			return c, tea.Quit
+		case "esc":
+			current := c.currentModel
+			c.currentModel = c.previousModel
+			c.previousModel = current
 		}
 	}
 
