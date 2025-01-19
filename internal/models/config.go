@@ -7,10 +7,11 @@ import (
 )
 
 type subModel interface {
-	Init() tea.Cmd
-	View() string
-	Update(tea.Msg) (tea.Model, tea.Cmd)
+	tea.Model
 	NextState() state
+	Get() error
+	Upsert() error
+	Delete() error
 }
 
 type config struct {
@@ -69,6 +70,9 @@ func (c *config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	if c.currentModel != mainMenu {
+		current.Get()
+	}
 	return c, cmd
 }
 

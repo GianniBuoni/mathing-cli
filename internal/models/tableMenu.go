@@ -9,18 +9,19 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 )
 
-type tableSelect[T any] struct {
-	selected    int
-	itemOffset  int
-	itemCount   int
-	headers     []string
-	items       []T
-	content     [][]string
+type tableMenu struct {
+	state       state
 	store       *store.Queries
-	refetchFunc func(*store.Queries, int) ([][]string, []T, int)
+	selected    int
+	itemCount   int
+	offset      int //page offset
+	offsetSteps int
+	itemIDs     []int // underlying id content
+	headers     []string
+	content     [][]string
 }
 
-func (t *tableSelect[T]) View() string {
+func (t *tableMenu) View() string {
 	// body
 	u := table.New().Border(lipgloss.NormalBorder()).BorderStyle(tableStyle).StyleFunc(
 		func(row, col int) lipgloss.Style {
@@ -38,9 +39,10 @@ func (t *tableSelect[T]) View() string {
 
 	if t.itemCount > 0 {
 		// pagination
-		pageNumbers := t.itemCount/20 + 1
-		currentPage := t.itemOffset/20 + 1
-		pagination := hintStyle.Margin(0, 1).Render(fmt.Sprintf("Page %02d of %02d", currentPage, pageNumbers))
+		pageNumbers := t.itemCount/t.offsetSteps + 1
+		currentPage := t.offset/t.offsetSteps + 1
+		pagination := hintStyle.Margin(0, 1).
+			Render(fmt.Sprintf("Page %02d of %02d", currentPage, pageNumbers))
 		s += "\n" + pagination
 
 		// item count
@@ -54,7 +56,7 @@ func (t *tableSelect[T]) View() string {
 	return s
 }
 
-func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (t *tableMenu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -70,16 +72,12 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "left", "h":
-			// refetch here
-			if t.itemOffset >= 20 {
-				t.itemOffset -= 20
-				t.content, t.items, _ = t.refetchFunc(t.store, t.itemOffset)
+			if t.offset >= t.offsetSteps {
+				t.offset -= t.offsetSteps
 			}
 		case "right", "l":
-			if (t.itemOffset + 20) <= t.itemCount {
-				t.itemOffset += 20
-
-				t.content, t.items, _ = t.refetchFunc(t.store, t.itemOffset)
+			if (t.offset + t.offsetSteps) <= t.itemCount {
+				t.offset += t.offsetSteps
 			}
 		}
 
@@ -87,18 +85,6 @@ func (t *tableSelect[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return t, nil
 }
 
-func (t *tableSelect[T]) Init() tea.Cmd {
+func (t *tableMenu) Init() tea.Cmd {
 	return nil
-}
-
-func (t *tableSelect[T]) NextState() state {
-	if len(t.items) == 0 {
-		return mainMenu
-	}
-	switch any(t.items[t.selected]).(type) {
-	case state:
-		return any(t.items[t.selected]).(state)
-	default:
-		return mainMenu
-	}
 }
