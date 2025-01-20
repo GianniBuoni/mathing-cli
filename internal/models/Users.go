@@ -7,20 +7,17 @@ import (
 )
 
 type ListUsers struct {
-	tableMenu
+	listMenu
 }
 
 // display as list instead of a table?
 func NewListUsers(s *store.Queries) (subModel, error) {
 	// hard coded data members
 	menu := &ListUsers{
-		tableMenu{
-			state:       listUsers,
-			store:       s,
-			selected:    0,
-			offset:      0,
-			offsetSteps: 10,
-			headers:     []string{"NAME"},
+		listMenu{
+			state:    listUsers,
+			store:    s,
+			selected: 0,
 		},
 	}
 
@@ -38,20 +35,16 @@ func (l *ListUsers) Get() error {
 		return fmt.Errorf("issue fetching user data: %w", err)
 	}
 
-	content := [][]string{}
+	content := []string{}
 	itemIDs := []int{}
 
 	for _, v := range res {
-		row := []string{v.Name}
-		content = append(content, row)
+		content = append(content, v.Name)
 		itemIDs = append(itemIDs, int(v.ID))
 	}
 
-	count := len(content)
-
 	l.content = content
 	l.itemIDs = itemIDs
-	l.itemCount = count
 
 	return nil
 }
