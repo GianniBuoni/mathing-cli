@@ -15,16 +15,12 @@ INSERT INTO items (
 ) VALUES ( 3, "Tomato paste", 1.99 );
 
 INSERT INTO users (
-  id, name, multiplier
-) VALUES ( 0, "Jon", 1.0 );
+  id, name
+) VALUES ( 0, "Jon" );
 
 INSERT INTO users (
-  id, name, multiplier
-) VALUES ( 1, "Paul", 1.0 );
-
-INSERT INTO users (
-  id, name, multiplier
-  ) VALUES ( 2, "Both", 0.5 );
+  id, name
+) VALUES ( 1, "Paul" );
 
 INSERT INTO receipt (
   item_id, item_qty, user_id

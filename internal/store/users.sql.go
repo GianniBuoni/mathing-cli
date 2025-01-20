@@ -11,20 +11,19 @@ import (
 
 const createUser = `-- name: CreateUser :exec
 INSERT INTO users (
-  id, name, multiplier
-) VALUES (?, ?, ? )
+  id, name
+) VALUES (?, ?)
   ON CONFLICT (id) DO UPDATE
-  SET name = excluded.name, multiplier = excluded.multiplier
+  SET name = excluded.name
 `
 
 type CreateUserParams struct {
-	ID         int64
-	Name       string
-	Multiplier float64
+	ID   int64
+	Name string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser, arg.ID, arg.Name, arg.Multiplier)
+	_, err := q.db.ExecContext(ctx, createUser, arg.ID, arg.Name)
 	return err
 }
 
@@ -39,7 +38,7 @@ func (q *Queries) DelteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, multiplier
+SELECT id, name
   FROM users
   WHERE id = ?
 `
@@ -47,12 +46,12 @@ SELECT id, name, multiplier
 func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
-	err := row.Scan(&i.ID, &i.Name, &i.Multiplier)
+	err := row.Scan(&i.ID, &i.Name)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, multiplier FROM users
+SELECT id, name FROM users
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -64,7 +63,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(&i.ID, &i.Name, &i.Multiplier); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

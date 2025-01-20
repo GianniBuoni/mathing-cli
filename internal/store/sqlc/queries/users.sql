@@ -1,9 +1,9 @@
 -- name: CreateUser :exec
 INSERT INTO users (
-  id, name, multiplier
-) VALUES (?, ?, ? )
+  id, name
+) VALUES (?, ?)
   ON CONFLICT (id) DO UPDATE
-  SET name = excluded.name, multiplier = excluded.multiplier;
+  SET name = excluded.name;
 
 -- name: ListUsers :many
 SELECT * FROM users;

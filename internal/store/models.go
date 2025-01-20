@@ -22,7 +22,6 @@ type Receipt struct {
 }
 
 type User struct {
-	ID         int64
-	Name       string
-	Multiplier float64
+	ID   int64
+	Name string
 }
