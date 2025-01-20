@@ -25,7 +25,12 @@ func NewConfig(storeQueries *store.Queries) (config, error) {
 	models := map[state]subModel{}
 
 	for k, v := range getIndex() {
-		models[k] = v.init(storeQueries)
+		subModel, err := v.init(storeQueries)
+		if err != nil {
+			return config{}, err
+		}
+
+		models[k] = subModel
 	}
 
 	c := config{
@@ -71,7 +76,10 @@ func (c *config) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if c.currentModel != mainMenu {
-		current.Get()
+		err := current.Get()
+		if err != nil {
+			return nil, tea.Printf("issue updating app: %v", err)
+		}
 	}
 	return c, cmd
 }

@@ -6,13 +6,11 @@ import (
 	"mathing/internal/store"
 )
 
-// boilerplate for new submodles
 type Receipt struct {
-	tableMenu //replace with any struct that implements the tea.Model interface
+	tableMenu
 }
 
-func NewReceipt(s *store.Queries) subModel {
-	// hard coded data members
+func NewReceipt(s *store.Queries) (subModel, error) {
 	menu := &Receipt{
 		tableMenu{
 			state:       listReceipt,
@@ -25,8 +23,10 @@ func NewReceipt(s *store.Queries) subModel {
 	}
 
 	// fetched data
-	menu.Get()
-	return menu
+	if err := menu.Get(); err != nil {
+		return nil, err
+	}
+	return menu, nil
 }
 
 func (r *Receipt) Get() error {

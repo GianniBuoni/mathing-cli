@@ -10,7 +10,7 @@ type ItemList struct {
 	tableMenu
 }
 
-func NewItemList(s *store.Queries) subModel {
+func NewItemList(s *store.Queries) (subModel, error) {
 	list := &ItemList{
 		tableMenu{
 			state:       listItems,
@@ -22,8 +22,10 @@ func NewItemList(s *store.Queries) subModel {
 		},
 	}
 
-	list.Get()
-	return list
+	if err := list.Get(); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (i *ItemList) Get() error {
@@ -65,5 +67,5 @@ func (i *ItemList) Delete() error {
 }
 
 func (i *ItemList) NextState() state {
-  return mainMenu
+	return mainMenu
 }

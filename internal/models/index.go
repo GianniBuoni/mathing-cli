@@ -21,7 +21,7 @@ const (
 type subModelInfo struct {
 	title       string
 	description string
-	init        func(*store.Queries) subModel
+	init        func(*store.Queries) (subModel, error)
 }
 
 func getIndex() map[state]subModelInfo {

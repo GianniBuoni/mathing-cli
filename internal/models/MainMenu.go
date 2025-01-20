@@ -8,7 +8,7 @@ type MainMenu struct {
 	tableMenu
 }
 
-func NewMainMenu(s *store.Queries) subModel {
+func NewMainMenu(s *store.Queries) (subModel, error) {
 	menu := &MainMenu{
 		tableMenu{
 			state:    mainMenu,
@@ -18,7 +18,7 @@ func NewMainMenu(s *store.Queries) subModel {
 	}
 
 	menu.Get()
-	return menu
+	return menu, nil
 }
 
 func (m *MainMenu) Get() error {
