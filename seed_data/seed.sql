@@ -23,8 +23,8 @@ INSERT INTO users (
 ) VALUES ( 1, "Paul" );
 
 INSERT INTO receipt (
-  item_id, item_qty, user_id
-) VALUES ( 1, 2, 2 );
+  item_id, item_qty
+) VALUES ( 1, 2 );
 
 INSERT INTO receipt (
   item_id, item_qty, user_id
