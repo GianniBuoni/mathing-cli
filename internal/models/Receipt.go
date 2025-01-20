@@ -30,9 +30,15 @@ func NewReceipt(s *store.Queries) subModel {
 }
 
 func (r *Receipt) Get() error {
-	res, err := r.store.ListReceipt(context.Background())
+	ctx := context.Background()
+	res, err := r.store.ListReceipt(ctx)
 	if err != nil {
 		return fmt.Errorf("issue getting receipt rows: %w", err)
+	}
+
+	count, err := r.store.CountReceipt(ctx)
+	if err != nil {
+		return fmt.Errorf("issue counting receipt rows: %w", err)
 	}
 
 	content := [][]string{}
@@ -40,19 +46,19 @@ func (r *Receipt) Get() error {
 
 	for _, v := range res {
 		row := []string{
-      v.ItemName,
-      fmt.Sprintf("%05.2f", v.ItemPrice),
-      fmt.Sprintf("%02d", v.ItemQty.Int64),
-      v.Payee,
-    }
+			v.ItemName,
+			fmt.Sprintf("%05.2f", v.ItemPrice),
+			fmt.Sprintf("%02d", v.ItemQty.Int64),
+			v.Payee,
+		}
 
-    content = append(content, row)
-    itemIDs = append(itemIDs, int(v.ID))
+		content = append(content, row)
+		itemIDs = append(itemIDs, int(v.ID))
 	}
 
-  r.content = content
-  r.itemIDs = itemIDs
-  r.itemCount = len(content)
+	r.content = content
+	r.itemIDs = itemIDs
+	r.itemCount = int(count)
 	return nil
 }
 

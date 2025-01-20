@@ -10,6 +10,51 @@ import (
 	"database/sql"
 )
 
+const calcReceiptTotal = `-- name: CalcReceiptTotal :one
+SELECT sum(i.price * r.item_qty) as calced_total
+FROM receipt r
+INNER JOIN items i
+ON r.item_id = i.id
+`
+
+func (q *Queries) CalcReceiptTotal(ctx context.Context) (sql.NullFloat64, error) {
+	row := q.db.QueryRowContext(ctx, calcReceiptTotal)
+	var calced_total sql.NullFloat64
+	err := row.Scan(&calced_total)
+	return calced_total, err
+}
+
+const calcUserTotal = `-- name: CalcUserTotal :one
+SELECT r.user_id, sum(i.price * r.item_qty) as user_total
+FROM receipt r
+INNER JOIN items i
+ON r.item_id = i.id
+WHERE r.user_id = ?
+`
+
+type CalcUserTotalRow struct {
+	UserID    sql.NullInt64
+	UserTotal sql.NullFloat64
+}
+
+func (q *Queries) CalcUserTotal(ctx context.Context, userID sql.NullInt64) (CalcUserTotalRow, error) {
+	row := q.db.QueryRowContext(ctx, calcUserTotal, userID)
+	var i CalcUserTotalRow
+	err := row.Scan(&i.UserID, &i.UserTotal)
+	return i, err
+}
+
+const countReceipt = `-- name: CountReceipt :one
+SELECT count(*) FROM receipt
+`
+
+func (q *Queries) CountReceipt(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countReceipt)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createReceiptItem = `-- name: CreateReceiptItem :exec
 INSERT INTO receipt (
   item_id, item_qty, user_id
@@ -40,21 +85,28 @@ func (q *Queries) DeletReceiptItem(ctx context.Context, id int64) error {
 }
 
 const listReceipt = `-- name: ListReceipt :many
-SELECT 
+SELECT
   r.id,
+  r.item_id,
   i.item as item_name,
   i.price as item_price,
-  r.item_qty, u.name as payee
+  r.item_qty,
+  r.user_id,
+  u.name as payee
 FROM receipt r
 INNER JOIN items i
+ON r.item_id = i.id
 INNER JOIN users u
+ON r.user_id = u.id
 `
 
 type ListReceiptRow struct {
 	ID        int64
+	ItemID    sql.NullInt64
 	ItemName  string
 	ItemPrice float64
 	ItemQty   sql.NullInt64
+	UserID    sql.NullInt64
 	Payee     string
 }
 
@@ -69,42 +121,16 @@ func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
 		var i ListReceiptRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.ItemID,
 			&i.ItemName,
 			&i.ItemPrice,
 			&i.ItemQty,
+			&i.UserID,
 			&i.Payee,
 		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listUserItems = `-- name: ListUserItems :many
-SELECT item_id FROM receipt
-WHERE user_id = ?
-`
-
-func (q *Queries) ListUserItems(ctx context.Context, userID sql.NullInt64) ([]sql.NullInt64, error) {
-	rows, err := q.db.QueryContext(ctx, listUserItems, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []sql.NullInt64
-	for rows.Next() {
-		var item_id sql.NullInt64
-		if err := rows.Scan(&item_id); err != nil {
-			return nil, err
-		}
-		items = append(items, item_id)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
