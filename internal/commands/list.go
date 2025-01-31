@@ -5,9 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"mathing/internal/lib"
-
-	"github.com/charmbracelet/lipgloss"
-	"github.com/charmbracelet/lipgloss/table"
 )
 
 var list CommandData = CommandData{
@@ -37,18 +34,7 @@ func HandleList(s *State, cmd Command) error {
 		tableData = append(tableData, row)
 	}
 
-	t := table.New().
-		BorderStyle(lib.TableStyle).
-		Headers(headers...).
-		Rows(tableData...).
-		StyleFunc(func(row, col int) lipgloss.Style {
-			switch {
-			case row == table.HeaderRow:
-				return lib.HeaderStyle
-			default:
-				return lib.NormalStyle.Margin(0, 1)
-			}
-		})
+	t := lib.NewTable(headers, tableData)
 
 	fmt.Println(t)
 
