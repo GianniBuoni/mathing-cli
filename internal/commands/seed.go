@@ -33,18 +33,22 @@ type item = store.CreateItemParams
 
 var items []item = []item{
 	{
+		ID:    0,
 		Item:  "banana",
 		Price: 0.49,
 	},
 	{
+		ID:    1,
 		Item:  "popcorn with herbs",
 		Price: 3.49,
 	},
 	{
+		ID:    2,
 		Item:  "peeled tomatoes",
 		Price: 2.49,
 	},
 	{
+		ID:    3,
 		Item:  "tomato paste",
 		Price: 1.99,
 	},

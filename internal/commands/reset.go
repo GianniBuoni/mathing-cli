@@ -2,18 +2,19 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
 var reset CommandData = CommandData{
 	Name:        "reset",
-	Description: "resets database tables (requires arguments)",
+	Description: "Resets database tables. Requires argument(s).",
 	Handler:     HandleReset,
 }
 
 func HandleReset(s *State, cmd Command) error {
 	if !(len(cmd.Args) == 1) {
-		return fmt.Errorf("expecting one argument.")
+		return errors.New("expecting one argument.")
 	}
 
 	fmt.Println("⚡ cleaning up database.")
