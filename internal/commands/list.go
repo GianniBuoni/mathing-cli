@@ -18,23 +18,27 @@ func HandleList(s *State, cmd Command) error {
 		return errors.New("expecting one argument.")
 	}
 
-	tableData := [][]string{}
-	headers := []string{"NAME", "PRICE"}
-
 	ctx := context.Background()
+	headers := []string{}
+	data := [][]string{}
+	var err error
 
-	items, err := s.Store.ListItems(ctx, 0)
-	if err != nil {
-		return fmt.Errorf("issue getting item data: %w", err)
+	switch cmd.Args[0] {
+	case "items":
+		headers, data, err = s.GetItemTable(ctx)
+		if err != nil {
+			return err
+		}
+	case "users":
+		headers, data, err = s.GetUserTable(ctx)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("table '%s' does not exist.", cmd.Args[0])
 	}
 
-	for _, v := range items {
-		price := fmt.Sprintf("%05.2f", v.Price)
-		row := []string{v.Item, price}
-		tableData = append(tableData, row)
-	}
-
-	t := lib.NewTable(headers, tableData)
+	t := lib.NewTable(headers, data)
 
 	fmt.Println(t)
 
