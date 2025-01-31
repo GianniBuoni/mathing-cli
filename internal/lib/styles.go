@@ -27,25 +27,25 @@ const (
 )
 
 var (
-	promptStyle = lipgloss.NewStyle().
+	PromptStyle = lipgloss.NewStyle().
 			Bold(true).
 			Italic(true).
 			Foreground(lipgloss.Color(bg)).
 			Background(lipgloss.Color(orange)).
 			Padding(0, 1)
-	hintStyle = lipgloss.NewStyle().
+	HintStyle = lipgloss.NewStyle().
 			Italic(true).
 			Foreground(lipgloss.Color(bg3))
-	highlightStyle = lipgloss.NewStyle().
+	HighlightStyle = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.Color(pink))
-	tableStyle = lipgloss.NewStyle().
+	TableStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(green))
-	headerStyle = lipgloss.NewStyle().
+	HeaderStyle = lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Bold(true).
 			Padding(0, 1).
 			Foreground(lipgloss.Color(green))
-	normalStyle = lipgloss.NewStyle().
+	NormalStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(fg))
 )

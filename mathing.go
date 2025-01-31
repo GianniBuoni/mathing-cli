@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	state := &commands.State{}
+	state := commands.NewState()
 	store, err := store.NewStore()
 	if err != nil {
 		log.Print(err)
@@ -16,13 +16,12 @@ func main() {
 	}
 
 	state.Store = store
-
-	commandList := commands.NewRegistry()
-	commandList.Load()
+	state.CommandList.Load()
 
 	input := os.Args
 	if len(input) < 2 {
-		log.Printf("❌: expecting command name and command argument.")
+		log.Println("❌: expecting command name and or command argument(s).")
+		log.Printf("❓: use 'help' command for full list of available actions")
 		os.Exit(1)
 	}
 
@@ -31,7 +30,7 @@ func main() {
 		Args: input[2:],
 	}
 
-	if err := commandList.Run(state, command); err != nil {
+	if err := state.CommandList.Run(state, command); err != nil {
 		log.Fatalf("❌: issue running command. %v", err)
 	}
 }
