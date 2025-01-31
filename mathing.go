@@ -2,28 +2,36 @@ package main
 
 import (
 	"log"
-	"os"
-
-	"mathing/internal/models"
+	"mathing/internal/commands"
 	"mathing/internal/store"
-
-	tea "github.com/charmbracelet/bubbletea"
+	"os"
 )
 
 func main() {
-	s, err := store.NewStore()
+	state := &commands.State{}
+	store, err := store.NewStore()
 	if err != nil {
-		log.Fatalf("issue initializing store: %v\n", err)
-	}
-
-	config, err := models.NewConfig(s)
-	if err != nil {
-		log.Fatalf("issue initializing model config: %v\n", err)
-	}
-
-	p := tea.NewProgram(&config)
-	if _, err := p.Run(); err != nil {
-		log.Fatalf("could not load program %v\n", err)
+		log.Print(err)
 		os.Exit(1)
+	}
+
+	state.Store = store
+
+	commandList := commands.NewRegistry()
+	commandList.Load()
+
+	input := os.Args
+	if len(input) < 2 {
+		log.Printf("❌: expecting command name and command argument.")
+		os.Exit(1)
+	}
+
+	command := commands.Command{
+		Name: input[1],
+		Args: input[2:],
+	}
+
+	if err := commandList.Run(state, command); err != nil {
+		log.Fatalf("❌: issue running command. %v", err)
 	}
 }

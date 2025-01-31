@@ -9,7 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//go:embed sqlc/schema.sql
+//go:embed sql/schema.sql
 var ddl string
 
 func NewStore() (*Queries, error) {

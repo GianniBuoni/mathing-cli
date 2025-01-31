@@ -17,3 +17,6 @@ SELECT count(*) FROM items;
 -- name: DeleteItem :exec
 DELETE FROM items
   WHERE id = ?;
+
+-- name: ResetItems :exec
+DELETE FROM items;
