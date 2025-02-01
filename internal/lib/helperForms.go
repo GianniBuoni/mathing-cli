@@ -4,12 +4,12 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func AllDone() (allDone bool) {
+func Confirm(a string, n string) (affirm bool) {
 	huh.NewConfirm().
-		Title("All Done? Or add more?").
-		Affirmative("All Done").
-		Negative("Add another item!").
-		Value(&allDone).
+		Title("Confirm").
+		Affirmative(a).
+		Negative(n).
+		Value(&affirm).
 		Run()
-	return allDone
+	return affirm
 }
