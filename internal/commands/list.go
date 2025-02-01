@@ -28,7 +28,7 @@ func HandleList(s *State, cmd Command) error {
 
 	switch cmd.Args[0] {
 	case "items":
-		m, err := models.NewItemsList(s)
+		m, err := models.NewItemsList(s.Store)
 		if err != nil {
 			return err
 		}
@@ -38,7 +38,7 @@ func HandleList(s *State, cmd Command) error {
 			return err
 		}
 	case "users":
-		headers, data, err = s.GetUserTable(ctx)
+		headers, data, err = s.Store.GetUserTable(ctx)
 		if err != nil {
 			return err
 		}

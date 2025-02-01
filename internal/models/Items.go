@@ -13,17 +13,17 @@ type ItemsList struct {
 	pageOffset int64
 	headers    []string
 	data       [][]string
-	state      interfaces.State
+	store      interfaces.Store
 }
 
-func NewItemsList(s interfaces.State) (*ItemsList, error) {
+func NewItemsList(s interfaces.Store) (*ItemsList, error) {
 	ctx := context.Background()
 	headers, data, err := s.GetItemTable(ctx, 0)
 	if err != nil {
 		return nil, err
 	}
 
-	count, err := s.GetItemCount(ctx)
+	count, err := s.CountItems(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func NewItemsList(s interfaces.State) (*ItemsList, error) {
 		pageOffset: 0,
 		headers:    headers,
 		data:       data,
-		state:      s,
+		store:      s,
 	}, nil
 }
 

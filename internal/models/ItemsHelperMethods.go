@@ -8,12 +8,12 @@ import (
 
 func (i *ItemsList) Refetch() error {
 	ctx := context.Background()
-	_, data, err := i.state.GetItemTable(ctx, i.pageOffset)
+	_, data, err := i.store.GetItemTable(ctx, i.pageOffset)
 	if err != nil {
 		return err
 	}
 
-	count, err := i.state.GetItemCount(ctx)
+	count, err := i.store.CountItems(ctx)
 	if err != nil {
 		return err
 	}
