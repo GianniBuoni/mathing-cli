@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mathing/internal/commands"
 	"mathing/internal/store"
@@ -30,6 +31,7 @@ func main() {
 		Args: input[2:],
 	}
 
+  fmt.Println()
 	if err := state.CommandList.Run(state, command); err != nil {
 		log.Fatalf("❌: issue running command. %v", err)
 	}
