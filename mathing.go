@@ -31,7 +31,7 @@ func main() {
 		Args: input[2:],
 	}
 
-  fmt.Println()
+	fmt.Println()
 	if err := state.CommandList.Run(state, command); err != nil {
 		log.Fatalf("❌: issue running command. %v", err)
 	}

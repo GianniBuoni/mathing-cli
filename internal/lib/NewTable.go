@@ -5,13 +5,27 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 )
 
-func NewTable(headers []string, data [][]string) *table.Table {
+type TableOpt struct {
+	selected int
+}
+
+func NewTable(headers []string, data [][]string, opts ...func(*TableOpt)) *table.Table {
+	config := &TableOpt{
+		selected: -1,
+	}
+
+	for _, opt := range opts {
+		opt(config)
+	}
+
 	return table.New().
 		BorderStyle(TableStyle).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			switch {
 			case row == table.HeaderRow:
 				return HeaderStyle
+			case row == config.selected:
+				return HighlightStyle.Margin(0, 1)
 			case row%2 == 0:
 				return NormalStyle.Margin(0, 1)
 			default:
@@ -20,4 +34,8 @@ func NewTable(headers []string, data [][]string) *table.Table {
 		}).
 		Headers(headers...).
 		Rows(data...)
+}
+
+func WithSelection(i int) func(*TableOpt) {
+	return func(to *TableOpt) { to.selected = i }
 }

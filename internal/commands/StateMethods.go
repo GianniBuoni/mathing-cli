@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-func (s *State) GetItemTable(ctx context.Context) (
+func (s *State) GetItemTable(ctx context.Context, pageOffset int64) (
 	headers []string, data [][]string, err error,
 ) {
-	items, err := s.Store.ListItems(ctx, 0)
+	items, err := s.Store.ListItems(ctx, pageOffset)
 	if err != nil {
 		return nil, nil, fmt.Errorf("issue getting item data: %w", err)
 	}
@@ -40,4 +40,13 @@ func (s *State) GetUserTable(ctx context.Context) (
 	headers = []string{"NAME"}
 
 	return headers, data, nil
+}
+
+func (s *State) GetItemCount(ctx context.Context) (count int64, err error) {
+  count, err = s.Store.CountItems(ctx)
+  if err != nil {
+    return 0, fmt.Errorf("issue getting item count: %w", err)
+  }
+
+  return count, nil
 }

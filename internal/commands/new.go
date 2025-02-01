@@ -32,7 +32,7 @@ func HandleNew(s *State, cmd Command) error {
 
 		fmt.Println("⭐ NEW!")
 		fmt.Printf("Item: %s, Price: %05.2f\n", data.Item, data.Price)
-    fmt.Println()
+		fmt.Println()
 
 		if lib.AllDone() {
 			break

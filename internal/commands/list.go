@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"mathing/internal/lib"
+	"mathing/internal/models"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 var list CommandData = CommandData{
@@ -25,8 +28,13 @@ func HandleList(s *State, cmd Command) error {
 
 	switch cmd.Args[0] {
 	case "items":
-		headers, data, err = s.GetItemTable(ctx)
+		m, err := models.NewItemsList(s)
 		if err != nil {
+			return err
+		}
+
+		p := tea.NewProgram(m)
+		if _, err = p.Run(); err != nil {
 			return err
 		}
 	case "users":
