@@ -13,7 +13,7 @@ func (i *ItemsList) View() string {
 	s += fmt.Sprintln()
 	s += fmt.Sprintln(lib.HintStyle.Render("(h) - Previous Page, (l) - Next Page"))
 	s += fmt.Sprintln(lib.HintStyle.Render("(ctrl+c) - Quit"))
+	s += fmt.Sprintln()
 
 	return s
 }
-

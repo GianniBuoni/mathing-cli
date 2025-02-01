@@ -1,6 +1,9 @@
 package interfaces
 
-import "context"
+import (
+	"context"
+	"mathing/internal/store"
+)
 
 type Store interface {
 	GetItemTable(context.Context, int64) ([]string, [][]string, error)
@@ -9,4 +12,6 @@ type Store interface {
 	// sqlc
 	CountItems(context.Context) (int64, error)
 	DeleteItem(context.Context, int64) error
+  ListItems(context.Context, int64) ([]store.Item, error)
+  CreateItem(context.Context, store.CreateItemParams) error
 }

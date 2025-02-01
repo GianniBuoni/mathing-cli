@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"mathing/internal/interfaces"
+	"mathing/internal/store"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -11,14 +12,20 @@ type ItemsList struct {
 	selected   int
 	itemCount  int64
 	pageOffset int64
+	store      interfaces.Store
 	headers    []string
 	data       [][]string
-	store      interfaces.Store
+	items      []store.Item
 }
 
 func NewItemsList(s interfaces.Store) (*ItemsList, error) {
 	ctx := context.Background()
 	headers, data, err := s.GetItemTable(ctx, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	items, err := s.ListItems(ctx, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -32,9 +39,10 @@ func NewItemsList(s interfaces.Store) (*ItemsList, error) {
 		selected:   0,
 		itemCount:  count,
 		pageOffset: 0,
+		store:      s,
 		headers:    headers,
 		data:       data,
-		store:      s,
+		items:      items,
 	}, nil
 }
 

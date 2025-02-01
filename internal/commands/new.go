@@ -34,7 +34,7 @@ func HandleNew(s *State, cmd Command) error {
 		fmt.Printf("Item: %s, Price: %05.2f\n", data.Item, data.Price)
 		fmt.Println()
 
-		if lib.AllDone() {
+		if lib.Confirm("All done!", "Add another item.") {
 			break
 		} else {
 			continue
