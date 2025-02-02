@@ -36,7 +36,6 @@ func (i *ItemsList) Refetch() (tea.Model, tea.Cmd) {
 
 	if i.selected > len(i.data)-1 {
 		i.selected = len(i.data) - 1
-		return i, tea.Println(i.selected)
 	}
 	return i, nil
 }
