@@ -41,6 +41,6 @@ func NewItemsList(s interfaces.Store) (*ItemsList, error) {
 			data:       data,
 		},
 		items:  items,
-		update: UpdateGenerator(),
+		update: HadnleUpdate,
 	}, nil
 }
