@@ -4,10 +4,14 @@ CREATE TABLE IF NOT EXISTS receipt (
   item_id INTEGER UNIQUE,
   user_id INTEGER,
   CONSTRAINT fk_item FOREIGN KEY (item_id)
-    REFERENCES items(id),
-  CONSTRAINT fk_user FOREIGN KEY (user_id)
-    REFERENCES users(id)
+    REFERENCES items(id)
 );
+
+CREATE TABLE IF NOT EXISTS receipts_users (
+  receipt_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  UNIQUE(receipt_id, user_id)
+)
 
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY,

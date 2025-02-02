@@ -24,26 +24,6 @@ func (q *Queries) CalcReceiptTotal(ctx context.Context) (sql.NullFloat64, error)
 	return calced_total, err
 }
 
-const calcUserTotal = `-- name: CalcUserTotal :one
-SELECT r.user_id, sum(i.price * r.item_qty) as user_total
-FROM receipt r
-INNER JOIN items i
-ON r.item_id = i.id
-WHERE r.user_id = ?
-`
-
-type CalcUserTotalRow struct {
-	UserID    sql.NullInt64
-	UserTotal sql.NullFloat64
-}
-
-func (q *Queries) CalcUserTotal(ctx context.Context, userID sql.NullInt64) (CalcUserTotalRow, error) {
-	row := q.db.QueryRowContext(ctx, calcUserTotal, userID)
-	var i CalcUserTotalRow
-	err := row.Scan(&i.UserID, &i.UserTotal)
-	return i, err
-}
-
 const countReceipt = `-- name: CountReceipt :one
 SELECT count(*) FROM receipt
 `
@@ -82,61 +62,4 @@ WHERE id = ?
 func (q *Queries) DeletReceiptItem(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deletReceiptItem, id)
 	return err
-}
-
-const listReceipt = `-- name: ListReceipt :many
-SELECT
-  r.id,
-  r.item_id,
-  i.item as item_name,
-  i.price as item_price,
-  r.item_qty,
-  r.user_id,
-  u.name as payee
-FROM receipt r
-INNER JOIN items i
-ON r.item_id = i.id
-INNER JOIN users u
-ON r.user_id = u.id
-`
-
-type ListReceiptRow struct {
-	ID        int64
-	ItemID    sql.NullInt64
-	ItemName  string
-	ItemPrice float64
-	ItemQty   sql.NullInt64
-	UserID    sql.NullInt64
-	Payee     string
-}
-
-func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
-	rows, err := q.db.QueryContext(ctx, listReceipt)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ListReceiptRow
-	for rows.Next() {
-		var i ListReceiptRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.ItemID,
-			&i.ItemName,
-			&i.ItemPrice,
-			&i.ItemQty,
-			&i.UserID,
-			&i.Payee,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }

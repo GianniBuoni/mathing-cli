@@ -21,6 +21,11 @@ type Receipt struct {
 	UserID  sql.NullInt64
 }
 
+type ReceiptsUser struct {
+	ReceiptID int64
+	UserID    int64
+}
+
 type User struct {
 	ID   int64
 	Name string
