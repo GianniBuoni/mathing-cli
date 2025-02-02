@@ -32,6 +32,7 @@ func Confirm(a string, n string) (affirm bool) {
 		Affirmative(a).
 		Negative(n).
 		Value(&affirm).
+		WithTheme(huh.ThemeDracula()).
 		Run()
 	return affirm
 }
@@ -44,6 +45,7 @@ func ListSelect() (list string) {
 			huh.NewOption("Users", "users"),
 		).
 		Value(&list).
+		WithTheme(huh.ThemeDracula()).
 		Run()
 
 	return list

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS receipts_users (
   receipt_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   UNIQUE(receipt_id, user_id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY,

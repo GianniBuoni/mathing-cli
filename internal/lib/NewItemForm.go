@@ -26,7 +26,8 @@ func NewItemForm() (store.CreateItemParams, error) {
 		huh.NewGroup(
 			huh.NewInput().Title("ITEM NAME?").Value(&data.Item),
 			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Value(&data.Price),
-		),
+		).
+			WithTheme(huh.ThemeDracula()),
 	)
 
 	if err := form.Run(); err != nil {

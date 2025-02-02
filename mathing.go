@@ -20,15 +20,16 @@ func main() {
 	state.CommandList.Load()
 
 	input := os.Args
+	command := commands.Command{}
 	if len(input) < 2 {
-		log.Println("❌: expecting command name and or command argument(s).")
-		log.Printf("❓: use 'help' command for full list of available actions")
-		os.Exit(1)
-	}
-
-	command := commands.Command{
-		Name: input[1],
-		Args: input[2:],
+		command = commands.Command{
+			Name: "list",
+		}
+	} else {
+		command = commands.Command{
+			Name: input[1],
+			Args: input[2:],
+		}
 	}
 
 	fmt.Println()
