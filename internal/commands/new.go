@@ -1,9 +1,6 @@
 package commands
 
 import (
-	"context"
-	"errors"
-	"fmt"
 	"mathing/internal/lib"
 )
 
@@ -14,32 +11,22 @@ var newRow CommandData = CommandData{
 }
 
 func HandleNew(s *State, cmd Command) error {
+	var list string
 	if !(len(cmd.Args) == 1) {
-		return errors.New("expecting one argument")
+		list = lib.ListSelect()
+	} else {
+		list = cmd.Args[0]
 	}
 
-	for {
-		ctx := context.Background()
-		data, err := lib.NewItemForm()
-		if err != nil {
+	switch list {
+	case "items":
+		if err := lib.NewItemLoop(
+			s.Store, lib.WithRepl(true),
+		); err != nil {
 			return err
 		}
-
-		err = s.Store.CreateItem(ctx, data)
-		if err != nil {
-			return fmt.Errorf("issue adding new item: %w", err)
-		}
-
-		fmt.Println("⭐ NEW!")
-		fmt.Printf("Item: %s, Price: %05.2f\n", data.Item, data.Price)
-		fmt.Println()
-
-		if lib.Confirm("All done!", "Add another item.") {
-			break
-		} else {
-			continue
-		}
+	default:
+		return lib.NoTableError(list)
 	}
-
 	return nil
 }

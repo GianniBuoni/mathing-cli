@@ -2,8 +2,8 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"mathing/internal/lib"
 )
 
 var reset CommandData = CommandData{
@@ -13,13 +13,16 @@ var reset CommandData = CommandData{
 }
 
 func HandleReset(s *State, cmd Command) error {
+	var list string
 	if !(len(cmd.Args) == 1) {
-		return errors.New("expecting one argument.")
+		list = lib.ListSelect()
+	} else {
+		list = cmd.Args[0]
 	}
 
 	fmt.Println("⚡ cleaning up database.")
 	ctx := context.Background()
-	switch cmd.Args[0] {
+	switch list {
 	case "items":
 		if err := s.Store.ResetItems(ctx); err != nil {
 			return fmt.Errorf("could not reset items table: %w", err)
@@ -28,8 +31,8 @@ func HandleReset(s *State, cmd Command) error {
 		if err := s.Store.ResetUsers(ctx); err != nil {
 			return fmt.Errorf("could not reset users table: %w", err)
 		}
-  default:
-		return fmt.Errorf("table '%s' does not exist.", cmd.Args[0])
+	default:
+		return lib.NoTableError(list)
 	}
 
 	fmt.Println("💀 database reset!")

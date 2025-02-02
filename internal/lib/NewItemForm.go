@@ -1,8 +1,9 @@
 package lib
 
 import (
-	"errors"
+	"context"
 	"fmt"
+	"mathing/internal/interfaces"
 	"mathing/internal/store"
 	"strconv"
 	"time"
@@ -42,9 +43,35 @@ func NewItemForm() (store.CreateItemParams, error) {
 	return parsedData, nil
 }
 
-func IsFloat(s string) error {
-	if _, err := strconv.ParseFloat(s, 64); err != nil {
-		return errors.New("inputted price is not a float")
+func NewItemLoop(s interfaces.Store, opts ...func(*LoopOpts)) error {
+	config := &LoopOpts{Repl: false}
+	for _, opt := range opts {
+		opt(config)
+	}
+
+	for {
+		ctx := context.Background()
+		data, err := NewItemForm()
+		if err != nil {
+			return err
+		}
+
+		err = s.CreateItem(ctx, data)
+		if err != nil {
+			return fmt.Errorf("issue adding new item: %w", err)
+		}
+
+		if config.Repl {
+			fmt.Println("⭐ NEW!")
+			fmt.Printf("Item: %s, Price: %05.2f\n", data.Item, data.Price)
+			fmt.Println()
+		}
+
+		if Confirm("All done!", "Add another item.") {
+			break
+		} else {
+			continue
+		}
 	}
 	return nil
 }

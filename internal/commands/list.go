@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"mathing/internal/lib"
 	"mathing/internal/models"
@@ -17,8 +16,11 @@ var list CommandData = CommandData{
 }
 
 func HandleList(s *State, cmd Command) error {
+	list := ""
 	if !(len(cmd.Args) == 1) {
-		return errors.New("expecting one argument.")
+		list = lib.ListSelect()
+	} else {
+		list = cmd.Args[0]
 	}
 
 	ctx := context.Background()
@@ -26,7 +28,7 @@ func HandleList(s *State, cmd Command) error {
 	data := [][]string{}
 	var err error
 
-	switch cmd.Args[0] {
+	switch list {
 	case "items":
 		m, err := models.NewItemsList(s.Store)
 		if err != nil {
@@ -43,7 +45,7 @@ func HandleList(s *State, cmd Command) error {
 			return err
 		}
 	default:
-		return fmt.Errorf("table '%s' does not exist.", cmd.Args[0])
+		return lib.NoTableError(list)
 	}
 
 	t := lib.NewTable(headers, data)

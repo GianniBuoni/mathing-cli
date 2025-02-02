@@ -51,23 +51,8 @@ func (i *ItemsList) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "a":
-			for {
-				newItem, err := lib.NewItemForm()
-				if err != nil {
-					return i, tea.Println(err)
-				}
-
-				err = i.store.CreateItem(context.Background(), newItem)
-				if err != nil {
-					return i, tea.Println(err)
-				}
-
-				if lib.Confirm("All done", "Add another item") {
-					break
-				} else {
-					continue
-				}
-
+			if err := lib.NewItemLoop(i.store); err != nil {
+				return i, tea.Println(err)
 			}
 			if err := i.Refetch(); err != nil {
 				return i, tea.Println(err)
