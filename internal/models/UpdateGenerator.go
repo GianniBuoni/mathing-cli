@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -13,6 +11,8 @@ type Table interface {
 	PageNext()
 	PagePrev()
 	Refetch() (tea.Model, tea.Cmd)
+	Create() (tea.Model, tea.Cmd)
+	Delete() (tea.Model, tea.Cmd)
 }
 
 func UpdateGenerator() func(tea.Msg, Table) (tea.Model, tea.Cmd) {
@@ -27,10 +27,14 @@ func UpdateGenerator() func(tea.Msg, Table) (tea.Model, tea.Cmd) {
 				table.SelectPrev()
 			case "l", "right":
 				table.PageNext()
-				table.Refetch()
+				return table.Refetch()
 			case "h", "left":
 				table.PagePrev()
-				table.Refetch()
+				return table.Refetch()
+			case "a":
+				return table.Create()
+			case "d":
+				return table.Delete()
 			case "ctrl+c":
 				return table, tea.Quit
 			}
@@ -38,45 +42,3 @@ func UpdateGenerator() func(tea.Msg, Table) (tea.Model, tea.Cmd) {
 		return table, nil
 	}
 }
-
-func (i *ItemsList) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if i.update == nil {
-		fmt.Println("❗Update method not implemented: quitting program")
-		return i, tea.Quit
-	}
-	return i.update(msg, i)
-}
-
-/*
-		// CRUD actions
-		case "d":
-			if lib.Confirm("Delete item", "Cancel") {
-				if err := i.store.DeleteItem(
-					context.Background(),
-					i.CurrentItem().ID,
-				); err != nil {
-					return i, tea.Println(err)
-				}
-
-				if err := i.Refetch(); err != nil {
-					return i, tea.Println(err)
-				}
-				return i, nil
-			}
-
-		case "a":
-			if err := lib.NewItemLoop(i.store); err != nil {
-				return i, tea.Println(err)
-			}
-			if err := i.Refetch(); err != nil {
-				return i, tea.Println(err)
-			}
-			return i, nil
-
-		case "ctrl+c":
-			return i, tea.Quit
-		}
-	}
-	return i, nil
-}
-*/

@@ -2,13 +2,18 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"mathing/internal/store"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (i *ItemsList) CurrentItem() store.Item {
-	return i.items[i.selected]
+func (i *ItemsList) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if i.update == nil {
+		fmt.Println("❗Update method not implemented: quitting program")
+		return i, tea.Quit
+	}
+	return i.update(msg, i)
 }
 
 func (i *ItemsList) Refetch() (tea.Model, tea.Cmd) {
@@ -29,6 +34,13 @@ func (i *ItemsList) Refetch() (tea.Model, tea.Cmd) {
 		return i, tea.Println(err)
 	}
 
-	i.selected = 0
+	if i.selected > len(i.data)-1 {
+		i.selected = len(i.data) - 1
+		return i, tea.Println(i.selected)
+	}
 	return i, nil
+}
+
+func (i *ItemsList) CurrentItem() store.Item {
+	return i.items[i.selected]
 }
