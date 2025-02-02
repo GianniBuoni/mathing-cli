@@ -9,13 +9,9 @@ import (
 )
 
 type ItemsList struct {
-	selected   int
-	itemCount  int64
-	pageOffset int64
-	store      interfaces.Store
-	headers    []string
-	data       [][]string
-	items      []store.Item
+	TableData
+	items  []store.Item
+	update func(tea.Msg, Table) (tea.Model, tea.Cmd)
 }
 
 func NewItemsList(s interfaces.Store) (*ItemsList, error) {
@@ -36,16 +32,15 @@ func NewItemsList(s interfaces.Store) (*ItemsList, error) {
 	}
 
 	return &ItemsList{
-		selected:   0,
-		itemCount:  count,
-		pageOffset: 0,
-		store:      s,
-		headers:    headers,
-		data:       data,
-		items:      items,
+		TableData: TableData{
+			selected:   0,
+			itemCount:  count,
+			pageOffset: 0,
+			store:      s,
+			headers:    headers,
+			data:       data,
+		},
+		items:  items,
+		update: UpdateGenerator(),
 	}, nil
-}
-
-func (i *ItemsList) Init() tea.Cmd {
-	return nil
 }
