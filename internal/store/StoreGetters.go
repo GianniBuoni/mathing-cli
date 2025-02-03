@@ -41,3 +41,24 @@ func (q *Queries) GetUserTable(ctx context.Context) (
 
 	return headers, data, nil
 }
+
+func (q *Queries) GetReceiptTable(ctx context.Context) (
+	headers []string, data [][]string, err error,
+) {
+	res, err := q.ListReciept(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("issue getting receipt data: %w", err)
+	}
+
+	for _, v := range res {
+		row := []string{
+			v.ItemName,
+			fmt.Sprintf("%05.2f", v.ItemPrice),
+			fmt.Sprintf("%1d", v.ItemQty),
+			v.Payee}
+		data = append(data, row)
+	}
+
+	headers = []string{"ITEM NAME", "ITEM PRICE", "ITEM QTY", "WHO PAYS?"}
+	return headers, data, nil
+}

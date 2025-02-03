@@ -25,7 +25,7 @@ WHERE id = ?;
 
 -- name: ListReciept :many
 SELECT
-  r.id, r.item_id, i.item as item_name, r.item_qty,
+  r.id, r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
   u.id as payee_id, u.name as payee
 FROM receipt r
 INNER JOIN items i
