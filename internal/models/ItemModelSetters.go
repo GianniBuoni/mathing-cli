@@ -1,27 +1,21 @@
 package models
 
 import (
-	"context"
+	"fmt"
 	"mathing/internal/lib"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (i *ItemModel) Delete() (tea.Model, tea.Cmd) {
-	if lib.Confirm("Delete item", "Cancel") {
-		if err := i.store.DeleteItem(
-			context.Background(),
-			i.CurrentItem().ID,
-		); err != nil {
-			return i, tea.Println(err)
-		}
-	}
-	return i.Refetch()
+var confirm string
+
+func (i *ItemModel) Delete() tea.Cmd {
+	title := fmt.Sprintf("Delete %s?", i.CurrentItem().Item)
+  i.form = lib.NewDeleteForm(title)
+	i.state = form
+  return i.form.Init()
 }
 
-func (i *ItemModel) Create() (tea.Model, tea.Cmd) {
-	if err := lib.NewItemLoop(i.store); err != nil {
-		return i, tea.Println(err)
-	}
-	return i.Refetch()
-}
+func (i *ItemModel) Create() {}
+
+func (i *ItemModel) Edit() {}

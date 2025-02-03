@@ -3,7 +3,13 @@ package models
 import (
 	"context"
 	"mathing/internal/interfaces"
+	"mathing/internal/store"
 )
+
+type ItemModel struct {
+	items []store.Item
+	ListModel
+}
 
 func NewItemsList(s interfaces.Store) (*ItemModel, error) {
 	lm := &ItemModel{

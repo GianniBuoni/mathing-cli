@@ -2,8 +2,8 @@ package models
 
 import (
 	"mathing/internal/interfaces"
-	"mathing/internal/store"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 )
 
@@ -21,7 +21,22 @@ type ListModel struct {
 	store interfaces.Store
 }
 
-type ItemModel struct {
-	items []store.Item
-  ListModel
+func (i *ListModel) Init() tea.Cmd {
+	return tea.Batch(i.table.Init())
 }
+
+func (lm *ListModel) View() string {
+	switch lm.state {
+	case form:
+		if lm.form.State == huh.StateCompleted {
+			lm.state = table
+			lm.Refetch()
+			return lm.table.View()
+		}
+		return lm.form.View()
+	default:
+		return lm.table.View()
+	}
+}
+
+func (*ListModel) Refetch() {}
