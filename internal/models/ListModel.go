@@ -23,10 +23,6 @@ const (
 	update
 )
 
-type Model interface {
-  Refetch() tea.Cmd
-}
-
 type ListModel struct {
 	state  ListState
 	action ListAction

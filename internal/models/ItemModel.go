@@ -16,7 +16,6 @@ type ItemModel struct {
 func NewItemsList(s interfaces.Store) (*ItemModel, error) {
 	lm := &ItemModel{
 		ListModel: ListModel{
-			state: table,
 			store: s,
       actionFuncs: map[ListAction]func() tea.Cmd{},
 		},

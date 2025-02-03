@@ -28,6 +28,10 @@ func (i *ItemModel) Refetch() tea.Cmd {
 	if i.table.selected > len(i.table.data)-1 {
 		i.table.selected = len(i.table.data) - 1
 	}
+
+	if i.table.CurrentPage() > i.table.PageCount() {
+		i.table.pageOffset = (i.table.PageCount() - 1) * 20
+	}
 	return nil
 }
 
