@@ -23,7 +23,7 @@ ON r.item_id = i.id;
 DELETE FROM receipt
 WHERE id = ?;
 
--- name: ListReciept :many
+-- name: ListReceipt :many
 SELECT
   r.id, r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
   u.id as payee_id, u.name as payee

@@ -45,7 +45,7 @@ func (q *Queries) GetUserTable(ctx context.Context) (
 func (q *Queries) GetReceiptTable(ctx context.Context) (
 	headers []string, data [][]string, err error,
 ) {
-	res, err := q.ListReciept(ctx)
+	res, err := q.ListReceipt(ctx)
 	if err != nil {
 		return nil, nil, fmt.Errorf("issue getting receipt data: %w", err)
 	}

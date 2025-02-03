@@ -79,7 +79,7 @@ func (q *Queries) DeleteReceipt(ctx context.Context, id int64) error {
 	return err
 }
 
-const listReciept = `-- name: ListReciept :many
+const listReceipt = `-- name: ListReceipt :many
 SELECT
   r.id, r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
   u.id as payee_id, u.name as payee
@@ -92,7 +92,7 @@ INNER JOIN users u
 ON ru.user_id = u.id
 `
 
-type ListRecieptRow struct {
+type ListReceiptRow struct {
 	ID        int64
 	ItemID    int64
 	ItemName  string
@@ -102,15 +102,15 @@ type ListRecieptRow struct {
 	Payee     string
 }
 
-func (q *Queries) ListReciept(ctx context.Context) ([]ListRecieptRow, error) {
-	rows, err := q.db.QueryContext(ctx, listReciept)
+func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
+	rows, err := q.db.QueryContext(ctx, listReceipt)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListRecieptRow
+	var items []ListReceiptRow
 	for rows.Next() {
-		var i ListRecieptRow
+		var i ListReceiptRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.ItemID,
