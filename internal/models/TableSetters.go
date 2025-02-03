@@ -7,7 +7,6 @@ func (t *TableData) SelectNext() {
 		t.selected = 0
 	}
 }
-
 func (t *TableData) SelectPrev() {
 	if t.selected > 0 {
 		t.selected--
