@@ -15,7 +15,7 @@ type Table interface {
 	Delete() (tea.Model, tea.Cmd)
 }
 
-func HadnleUpdate(msg tea.Msg, table Table) (tea.Model, tea.Cmd) {
+func (table *TableData) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -26,16 +26,8 @@ func HadnleUpdate(msg tea.Msg, table Table) (tea.Model, tea.Cmd) {
 			table.SelectPrev()
 		case "l", "right":
 			table.PageNext()
-			return table.Refetch()
 		case "h", "left":
 			table.PagePrev()
-			return table.Refetch()
-		case "a":
-			return table.Create()
-		case "d":
-			return table.Delete()
-		case "ctrl+c":
-			return table, tea.Quit
 		}
 	}
 	return table, nil
