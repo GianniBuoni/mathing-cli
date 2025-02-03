@@ -24,12 +24,12 @@ const (
 )
 
 type ListModel struct {
-	state  ListState
-	action ListAction
-	table  *TableData
-	form   *huh.Form
-	store  interfaces.Store
-  actionFuncs map[ListAction]func() tea.Cmd
+	state       ListState
+	action      ListAction
+	table       *TableData
+	form        *huh.Form
+	store       interfaces.Store
+	actionFuncs map[ListAction]func() tea.Cmd
 }
 
 func (i *ListModel) Init() tea.Cmd {
@@ -50,5 +50,9 @@ func (lm *ListModel) View() string {
 	}
 }
 
+func (i *ListModel) RegisterAction(la ListAction, f func() tea.Cmd) {
+	i.actionFuncs[la] = f
+}
+
 func (*ListModel) Refetch() {}
-func (*ListModel) Delete() {}
+func (*ListModel) Delete()  {}

@@ -14,8 +14,6 @@ func (i *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c":
 			return i, tea.Quit
-		case "d":
-			cmds = append(cmds, i.DeleteInit())
 		case "esc":
 			i.state = table
 		}
@@ -35,6 +33,15 @@ func (i *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 		}
 	default:
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			switch msg.String() {
+			case "d":
+				cmds = append(cmds, i.DeleteInit())
+			case "a":
+				cmds = append(cmds, i.CreateInit())
+			}
+		}
 		t, cmd := i.table.Update(msg)
 		if tt, ok := t.(*TableData); ok {
 			i.table = tt

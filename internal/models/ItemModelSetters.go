@@ -8,13 +8,28 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var confirm string
-
-func (i *ListModel) RegisterAction(la ListAction, f func() tea.Cmd) {
-	i.actionFuncs[la] = f
+// CREATE
+func (i *ItemModel) CreateInit() tea.Cmd {
+	i.form = lib.NewItemForm()
+	i.state = form
+	i.action = create
+	return i.form.Init()
 }
 
-func (i *ItemModel) Create() {}
+func (i *ItemModel) Create() tea.Cmd {
+	res, err := lib.NewItemParser(i.form)
+	if err != nil {
+		return tea.Println(err)
+	}
+	err = i.store.CreateItem(context.Background(), res)
+	if err != nil {
+		return tea.Println(err)
+	}
+	if err := i.Refetch(); err != nil {
+		return tea.Println(err)
+	}
+	return nil
+}
 
 func (i *ItemModel) Edit() {}
 

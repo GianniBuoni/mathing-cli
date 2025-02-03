@@ -5,7 +5,7 @@ import (
 )
 
 func NewDeleteForm(title string) *huh.Form {
-	fd := huh.NewForm(
+	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
 				Key("confirm").
@@ -14,5 +14,4 @@ func NewDeleteForm(title string) *huh.Form {
 				Title(title),
 		),
 	)
-	return fd
 }

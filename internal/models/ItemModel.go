@@ -22,6 +22,7 @@ func NewItemsList(s interfaces.Store) (*ItemModel, error) {
 	}
 	lm.table = NewTableData()
   lm.RegisterAction(remove, lm.Delete)
+  lm.RegisterAction(create, lm.Create)
 
 	ctx := context.Background()
 	var err error

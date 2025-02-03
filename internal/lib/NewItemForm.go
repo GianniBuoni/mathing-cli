@@ -20,26 +20,24 @@ type NewUserFormData struct {
 	Name string
 }
 
-func NewItemForm() (store.CreateItemParams, error) {
-	data := NewItemFormData{}
-	form := huh.NewForm(
+func NewItemForm() *huh.Form {
+	return huh.NewForm(
 		huh.NewGroup(
-			huh.NewInput().Title("ITEM NAME?").Value(&data.Item),
-			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Value(&data.Price),
+			huh.NewInput().Title("ITEM NAME?").Key("item"),
+			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price"),
+			huh.NewConfirm().Affirmative("Submit").Negative("Cancel").Key("confirm"),
 		).
 			WithTheme(huh.ThemeDracula()),
 	)
+}
 
-	if err := form.Run(); err != nil {
-		return store.CreateItemParams{}, fmt.Errorf("form error: %w", err)
-	}
-
+func NewItemParser(form *huh.Form) (store.CreateItemParams, error) {
 	parsedData := store.CreateItemParams{
 		ID: time.Now().Unix(),
 	}
 
-	parsedData.Item, _ = CleanInput(data.Item)
-	parsedData.Price, _ = strconv.ParseFloat(data.Price, 64)
+	parsedData.Item, _ = CleanInput(form.GetString("item"))
+	parsedData.Price, _ = strconv.ParseFloat(form.GetString("price"), 64)
 
 	return parsedData, nil
 }
@@ -52,7 +50,11 @@ func NewItemLoop(s interfaces.Store, opts ...func(*LoopOpts)) error {
 
 	for {
 		ctx := context.Background()
-		data, err := NewItemForm()
+		form := NewItemForm()
+		if err := form.Run(); err != nil {
+			return fmt.Errorf("form error: %w", err)
+		}
+		data, err := NewItemParser(form)
 		if err != nil {
 			return err
 		}
