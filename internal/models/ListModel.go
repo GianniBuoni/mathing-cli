@@ -20,7 +20,7 @@ const (
 	none ListAction = iota
 	create
 	remove
-	update
+	edit
 )
 
 type ListModel struct {

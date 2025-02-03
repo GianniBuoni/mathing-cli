@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-type NewItemFormData struct {
+type ItemFormData struct {
 	Item  string
 	Price string
 }
@@ -20,11 +20,17 @@ type NewUserFormData struct {
 	Name string
 }
 
-func NewItemForm() *huh.Form {
+func NewItemForm(opts ...func(*ItemFormData)) *huh.Form {
+	defaultV := ItemFormData{}
+
+	for _, opt := range opts {
+		opt(&defaultV)
+	}
+
 	return huh.NewForm(
 		huh.NewGroup(
-			huh.NewInput().Title("ITEM NAME?").Key("item"),
-			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price"),
+			huh.NewInput().Title("ITEM NAME?").Key("item").Value(&defaultV.Item),
+			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price").Value(&defaultV.Price),
 			huh.NewConfirm().Affirmative("Submit").Negative("Cancel").Key("confirm"),
 		).
 			WithTheme(huh.ThemeDracula()),

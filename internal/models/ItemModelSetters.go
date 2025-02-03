@@ -2,25 +2,17 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"mathing/internal/lib"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
-
-// CREATE
-func (i *ItemModel) CreateInit() tea.Cmd {
-	i.form = lib.NewItemForm()
-	i.state = form
-	i.action = create
-	return i.form.Init()
-}
 
 func (i *ItemModel) Create() tea.Cmd {
 	res, err := lib.NewItemParser(i.form)
 	if err != nil {
 		return tea.Println(err)
 	}
+
 	err = i.store.CreateItem(context.Background(), res)
 	if err != nil {
 		return tea.Println(err)
@@ -31,15 +23,22 @@ func (i *ItemModel) Create() tea.Cmd {
 	return nil
 }
 
-func (i *ItemModel) Edit() {}
+func (i *ItemModel) Edit() tea.Cmd {
+	res, err := lib.NewItemParser(i.form)
+	if err != nil {
+		return tea.Println(err)
+	}
 
-// DELETE
-func (i *ItemModel) DeleteInit() tea.Cmd {
-	title := fmt.Sprintf("Delete %s?", i.CurrentItem().Item)
-	i.form = lib.NewDeleteForm(title)
-	i.state = form
-	i.action = remove
-	return i.form.Init()
+	res.ID = i.CurrentItem().ID
+
+	err = i.store.CreateItem(context.Background(), res)
+	if err != nil {
+		return tea.Println(err)
+	}
+	if err := i.Refetch(); err != nil {
+		return tea.Println(err)
+	}
+	return nil
 }
 
 func (i *ItemModel) Delete() tea.Cmd {

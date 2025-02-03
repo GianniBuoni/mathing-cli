@@ -37,9 +37,11 @@ func (i *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyMsg:
 			switch msg.String() {
 			case "d":
-				cmds = append(cmds, i.DeleteInit())
+				cmds = append(cmds, i.DeleteInit(i.CurrentItem().Item))
 			case "a":
 				cmds = append(cmds, i.CreateInit())
+			case "e":
+				cmds = append(cmds, i.EditInit(i.CurrentItem()))
 			}
 		}
 		t, cmd := i.table.Update(msg)

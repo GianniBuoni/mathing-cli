@@ -16,13 +16,14 @@ type ItemModel struct {
 func NewItemsList(s interfaces.Store) (*ItemModel, error) {
 	lm := &ItemModel{
 		ListModel: ListModel{
-			store: s,
-      actionFuncs: map[ListAction]func() tea.Cmd{},
+			store:       s,
+			actionFuncs: map[ListAction]func() tea.Cmd{},
 		},
 	}
 	lm.table = NewTableData()
-  lm.RegisterAction(remove, lm.Delete)
-  lm.RegisterAction(create, lm.Create)
+	lm.RegisterAction(remove, lm.Delete)
+	lm.RegisterAction(create, lm.Create)
+	lm.RegisterAction(edit, lm.Edit)
 
 	ctx := context.Background()
 	var err error
