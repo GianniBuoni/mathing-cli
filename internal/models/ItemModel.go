@@ -4,6 +4,8 @@ import (
 	"context"
 	"mathing/internal/interfaces"
 	"mathing/internal/store"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type ItemModel struct {
@@ -16,9 +18,11 @@ func NewItemsList(s interfaces.Store) (*ItemModel, error) {
 		ListModel: ListModel{
 			state: table,
 			store: s,
+      actionFuncs: map[ListAction]func() tea.Cmd{},
 		},
 	}
 	lm.table = NewTableData()
+  lm.RegisterAction(remove, lm.Delete)
 
 	ctx := context.Background()
 	var err error

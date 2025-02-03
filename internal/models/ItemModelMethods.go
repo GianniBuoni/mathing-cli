@@ -5,40 +5,43 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func (lm *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var (
-		cmds []tea.Cmd
-	)
+func (i *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
+	// SHARED UPDATE
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
-			return lm, tea.Quit
+			return i, tea.Quit
 		case "d":
-			cmds = append(cmds, lm.Delete())
+			cmds = append(cmds, i.DeleteInit())
 		case "esc":
-			lm.state = table
+			i.state = table
 		}
 	}
 
-	switch lm.state {
+	// STATE UPDATE
+	switch i.state {
 	case form:
-		form, cmd := lm.form.Update(msg)
+		form, cmd := i.form.Update(msg)
 		if f, ok := form.(*huh.Form); ok {
-			lm.form = f
-			if lm.form.State == huh.StateCompleted {
-				cmds = append(cmds, tea.Println("ACTION"))
+			i.form = f
+			if i.form.State == huh.StateCompleted &&
+				i.form.GetBool("confirm") == true {
+				cmd = i.actionFuncs[i.action]()
+				cmds = append(cmds, cmd)
 			}
 			cmds = append(cmds, cmd)
 		}
 	default:
-		t, cmd := lm.table.Update(msg)
+		t, cmd := i.table.Update(msg)
 		if tt, ok := t.(*TableData); ok {
-			lm.table = tt
+			i.table = tt
 			cmds = append(cmds, cmd)
-			lm.Refetch()
-
+			cmd = i.Refetch()
+			cmds = append(cmds, cmd)
 		}
 	}
-	return lm, tea.Batch(cmds...)
+	return i, tea.Batch(cmds...)
 }

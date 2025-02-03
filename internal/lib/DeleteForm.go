@@ -8,7 +8,7 @@ func NewDeleteForm(title string) *huh.Form {
 	fd := huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Key("action").
+				Key("confirm").
 				Affirmative("Yup").
 				Negative("Nah").
 				Title(title),
