@@ -4,10 +4,6 @@
 
 package store
 
-import (
-	"database/sql"
-)
-
 type Item struct {
 	ID    int64
 	Item  string
@@ -16,9 +12,8 @@ type Item struct {
 
 type Receipt struct {
 	ID      int64
-	ItemQty sql.NullInt64
-	ItemID  sql.NullInt64
-	UserID  sql.NullInt64
+	ItemQty int64
+	ItemID  int64
 }
 
 type ReceiptsUser struct {

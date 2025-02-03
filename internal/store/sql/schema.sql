@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS receipt (
   id INTEGER PRIMARY KEY,
-  item_qty INTEGER,
-  item_id INTEGER UNIQUE,
-  user_id INTEGER,
+  item_qty INTEGER NOT NULL,
+  item_id INTEGER UNIQUE NOT NULL,
   CONSTRAINT fk_item FOREIGN KEY (item_id)
     REFERENCES items(id)
 );
