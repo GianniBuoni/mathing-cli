@@ -2,6 +2,7 @@ package commands
 
 import (
 	"mathing/internal/lib"
+	"mathing/internal/store"
 )
 
 var newRow CommandData = CommandData{
@@ -21,7 +22,7 @@ func HandleNew(s *State, cmd Command) error {
 	switch list {
 	case "items":
 		if err := lib.NewItemLoop(
-			s.Store, lib.WithRepl(true),
+			store.NewItemStore(s.Store), lib.WithRepl(true),
 		); err != nil {
 			return err
 		}

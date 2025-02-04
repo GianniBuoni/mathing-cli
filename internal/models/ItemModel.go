@@ -2,40 +2,32 @@ package models
 
 import (
 	"context"
-	"mathing/internal/interfaces"
 	"mathing/internal/store"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type ItemModel struct {
-	items []store.Item
-	ListModel
-}
-
-func NewItemsList(s interfaces.Store) (*ItemModel, error) {
-	lm := &ItemModel{
-		ListModel: ListModel{
-			store:       s,
-			actionFuncs: map[ListAction]func() tea.Cmd{},
-		},
+func NewItemModel(s *store.ItemStore) (*ListModel[store.Item], error) {
+	lm := &ListModel[store.Item]{
+		store:       s,
+		actionFuncs: map[ListAction]func() tea.Cmd{},
 	}
 	lm.table = NewTableData()
 	lm.RegisterAction(remove, lm.Delete)
-	lm.RegisterAction(create, lm.Create)
-	lm.RegisterAction(edit, lm.Edit)
+	lm.RegisterAction(create, lm.Post)
+	lm.RegisterAction(edit, lm.Post)
 
 	ctx := context.Background()
 	var err error
-	lm.table.headers, lm.table.data, err = s.GetItemTable(ctx, 0)
+	lm.table.headers, lm.table.data, err = s.GetTable(ctx, 0)
 	if err != nil {
 		return nil, err
 	}
-	lm.table.itemCount, err = s.CountItems(ctx)
+	lm.table.itemCount, err = s.CountRows(ctx)
 	if err != nil {
 		return nil, err
 	}
-	lm.items, err = s.ListItems(ctx, 0)
+	lm.rows, err = s.GetRows(ctx, 0)
 	if err != nil {
 		return nil, err
 	}

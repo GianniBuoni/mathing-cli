@@ -5,9 +5,10 @@ import (
 	"fmt"
 )
 
-func (q *Queries) GetItemTable(ctx context.Context, pageOffset int64) (
+func (i *Item) GetTable(q *Queries, pageOffset int64) (
 	headers []string, data [][]string, err error,
 ) {
+	ctx := context.Background()
 	items, err := q.ListItems(ctx, pageOffset)
 	if err != nil {
 		return nil, nil, fmt.Errorf("issue getting item data: %w", err)

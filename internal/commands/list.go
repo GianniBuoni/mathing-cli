@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mathing/internal/lib"
 	"mathing/internal/models"
+	"mathing/internal/store"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -30,7 +31,7 @@ func HandleList(s *State, cmd Command) error {
 
 	switch list {
 	case "items":
-		m, err := models.NewItemsList(s.Store)
+		m, err := models.NewItemModel(store.NewItemStore(s.Store))
 		if err != nil {
 			return err
 		}
@@ -44,16 +45,8 @@ func HandleList(s *State, cmd Command) error {
 		if err != nil {
 			return err
 		}
-  case "receipt":
-    m, err := models.NewReceiptList(s.Store)
-		if err != nil {
-			return err
-		}
+	case "receipt":
 
-		p := tea.NewProgram(m)
-		if _, err = p.Run(); err != nil {
-			return err
-		}
 	default:
 		return lib.NoTableError(list)
 	}

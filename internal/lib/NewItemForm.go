@@ -3,7 +3,6 @@ package lib
 import (
 	"context"
 	"fmt"
-	"mathing/internal/interfaces"
 	"mathing/internal/store"
 	"strconv"
 	"time"
@@ -48,7 +47,7 @@ func NewItemParser(form *huh.Form) (store.CreateItemParams, error) {
 	return parsedData, nil
 }
 
-func NewItemLoop(s interfaces.Store, opts ...func(*LoopOpts)) error {
+func NewItemLoop(s *store.ItemStore, opts ...func(*LoopOpts)) error {
 	config := &LoopOpts{Repl: false}
 	for _, opt := range opts {
 		opt(config)
@@ -60,12 +59,12 @@ func NewItemLoop(s interfaces.Store, opts ...func(*LoopOpts)) error {
 		if err := form.Run(); err != nil {
 			return fmt.Errorf("form error: %w", err)
 		}
-		data, err := NewItemParser(form)
+		data, err := s.Parse(form)
 		if err != nil {
 			return err
 		}
 
-		err = s.CreateItem(ctx, data)
+		err = s.Post(ctx, data)
 		if err != nil {
 			return fmt.Errorf("issue adding new item: %w", err)
 		}

@@ -2,20 +2,19 @@ package interfaces
 
 import (
 	"context"
-	"mathing/internal/store"
+
+	"github.com/charmbracelet/huh"
 )
 
-type Store interface {
-	GetItemTable(context.Context, int64) ([]string, [][]string, error)
-	GetUserTable(context.Context) ([]string, [][]string, error)
-	GetReceiptTable(context.Context, int64) ([]string, [][]string, error)
+type Store[T any] interface {
+	GetTable(context.Context, int64) ([]string, [][]string, error)
+	GetRows(context.Context, int64) ([]T, error)
+	CountRows(context.Context) (int64, error)
+	Post(context.Context, T) error
+	Delete(context.Context, T) error
 
-	// sqlc
-	CountItems(context.Context) (int64, error)
-	CreateItem(context.Context, store.CreateItemParams) error
-	DeleteItem(context.Context, int64) error
-	ListItems(context.Context, int64) ([]store.Item, error)
-	CountReceipt(context.Context) (int64, error)
-	CreateReceipt(context.Context, store.CreateReceiptParams) error
-	ListReceipt(context.Context, int64) ([]store.ListReceiptRow, error)
+	// forms
+	Parse(*huh.Form) (T, error)
+	NewForm(...T) *huh.Form
+	DeletFrom(T) *huh.Form
 }
