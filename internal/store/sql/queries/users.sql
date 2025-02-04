@@ -16,6 +16,3 @@ SELECT *
 -- name: DelteUser :exec
 DELETE FROM users
   WHERE id = ?;
-
--- name: ResetUsers :exec
-DELETE FROM users;

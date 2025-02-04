@@ -33,6 +33,6 @@ ON ru.receipt_id= r.id
 INNER JOIN users u
 ON ru.user_id = u.id
 INNER JOIN items i
-ON r.id = i.id
+ON r.item_id = i.id
 GROUP BY r.id
 LIMIT 20 OFFSET ?;

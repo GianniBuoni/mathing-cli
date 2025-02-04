@@ -86,12 +86,3 @@ func (q *Queries) ListItems(ctx context.Context, offset int64) ([]Item, error) {
 	}
 	return items, nil
 }
-
-const resetItems = `-- name: ResetItems :exec
-DELETE FROM items
-`
-
-func (q *Queries) ResetItems(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, resetItems)
-	return err
-}
