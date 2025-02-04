@@ -40,7 +40,7 @@ INSERT INTO receipt (
   item_id, item_qty
 ) VALUES ( ?, ? )
   ON CONFLICT (item_id) DO UPDATE
-  SET item_qty = excluded.item_qty, user_id = excluded.user_id
+  SET item_qty = excluded.item_qty
 `
 
 type CreateReceiptParams struct {
@@ -81,29 +81,31 @@ func (q *Queries) DeleteReceipt(ctx context.Context, id int64) error {
 
 const listReceipt = `-- name: ListReceipt :many
 SELECT
-  r.id, r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
-  u.id as payee_id, u.name as payee
-FROM receipt r
-INNER JOIN items i
-ON r.item_id = i.id
-INNER JOIN receipts_users ru
-ON r.id = ru.receipt_id
+  r.id , r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
+  GROUP_CONCAT(u.name) as payee, COUNT(u.id) as payee_count
+FROM receipts_users ru
+INNER JOIN receipt r
+ON ru.receipt_id= r.id
 INNER JOIN users u
 ON ru.user_id = u.id
+INNER JOIN items i
+ON r.id = i.id
+GROUP BY r.id
+LIMIT 20 OFFSET ?
 `
 
 type ListReceiptRow struct {
-	ID        int64
-	ItemID    int64
-	ItemName  string
-	ItemPrice float64
-	ItemQty   int64
-	PayeeID   int64
-	Payee     string
+	ID         int64
+	ItemID     int64
+	ItemName   string
+	ItemPrice  float64
+	ItemQty    int64
+	Payee      string
+	PayeeCount int64
 }
 
-func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
-	rows, err := q.db.QueryContext(ctx, listReceipt)
+func (q *Queries) ListReceipt(ctx context.Context, offset int64) ([]ListReceiptRow, error) {
+	rows, err := q.db.QueryContext(ctx, listReceipt, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -117,8 +119,8 @@ func (q *Queries) ListReceipt(ctx context.Context) ([]ListReceiptRow, error) {
 			&i.ItemName,
 			&i.ItemPrice,
 			&i.ItemQty,
-			&i.PayeeID,
 			&i.Payee,
+			&i.PayeeCount,
 		); err != nil {
 			return nil, err
 		}

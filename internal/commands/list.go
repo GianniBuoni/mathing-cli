@@ -44,6 +44,16 @@ func HandleList(s *State, cmd Command) error {
 		if err != nil {
 			return err
 		}
+  case "receipt":
+    m, err := models.NewReceiptList(s.Store)
+		if err != nil {
+			return err
+		}
+
+		p := tea.NewProgram(m)
+		if _, err = p.Run(); err != nil {
+			return err
+		}
 	default:
 		return lib.NoTableError(list)
 	}

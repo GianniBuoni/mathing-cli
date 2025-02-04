@@ -36,6 +36,17 @@ func (i *ListModel) Init() tea.Cmd {
 	return tea.Batch(i.table.Init())
 }
 
+func (lm *ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c":
+			return lm, tea.Quit
+		}
+	}
+	return lm, nil
+}
+
 func (lm *ListModel) View() string {
 	switch lm.state {
 	case form:

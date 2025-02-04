@@ -27,7 +27,9 @@ func NewReceiptList(s interfaces.Store) (*ReceiptModel, error) {
 	ctx := context.Background()
 	var err error
 
-	rm.table.headers, rm.table.data, err = s.GetReceiptTable(ctx)
+	rm.table.headers, rm.table.data, err = s.GetReceiptTable(
+		ctx, rm.table.pageOffset,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +39,7 @@ func NewReceiptList(s interfaces.Store) (*ReceiptModel, error) {
 		return nil, err
 	}
 
-	rm.receiptRows, err = s.ListReceipt(ctx)
+	rm.receiptRows, err = s.ListReceipt(ctx, rm.table.pageOffset)
 	if err != nil {
 		return nil, err
 	}

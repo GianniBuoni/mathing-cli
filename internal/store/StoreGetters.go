@@ -42,10 +42,10 @@ func (q *Queries) GetUserTable(ctx context.Context) (
 	return headers, data, nil
 }
 
-func (q *Queries) GetReceiptTable(ctx context.Context) (
+func (q *Queries) GetReceiptTable(ctx context.Context, pageOffset int64) (
 	headers []string, data [][]string, err error,
 ) {
-	res, err := q.ListReceipt(ctx)
+	res, err := q.ListReceipt(ctx, pageOffset)
 	if err != nil {
 		return nil, nil, fmt.Errorf("issue getting receipt data: %w", err)
 	}

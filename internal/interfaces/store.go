@@ -8,7 +8,7 @@ import (
 type Store interface {
 	GetItemTable(context.Context, int64) ([]string, [][]string, error)
 	GetUserTable(context.Context) ([]string, [][]string, error)
-	GetReceiptTable(context.Context) ([]string, [][]string, error)
+	GetReceiptTable(context.Context, int64) ([]string, [][]string, error)
 
 	// sqlc
 	CountItems(context.Context) (int64, error)
@@ -17,5 +17,5 @@ type Store interface {
 	ListItems(context.Context, int64) ([]store.Item, error)
 	CountReceipt(context.Context) (int64, error)
 	CreateReceipt(context.Context, store.CreateReceiptParams) error
-	ListReceipt(context.Context) ([]store.ListReceiptRow, error)
+	ListReceipt(context.Context, int64) ([]store.ListReceiptRow, error)
 }

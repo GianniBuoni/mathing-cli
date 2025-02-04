@@ -41,6 +41,7 @@ func ListSelect() (list string) {
 	huh.NewSelect[string]().
 		Title("Select a table to view").
 		Options(
+			huh.NewOption("Receipt", "receipt"),
 			huh.NewOption("Items", "items"),
 			huh.NewOption("Users", "users"),
 		).

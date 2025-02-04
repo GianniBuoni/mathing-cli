@@ -31,6 +31,20 @@ func HandleSeed(s *State, cmd Command) error {
 		}
 	}
 
+	for _, receipt := range receipts {
+		fmt.Printf("Adding ITEM: %d, QTY: %d\n", receipt.ItemID, receipt.ItemQty)
+		if err := s.Store.CreateReceipt(ctx, receipt); err != nil {
+			return fmt.Errorf("could not seed receipts: %w", err)
+		}
+	}
+
+	for _, ru := range rus {
+		fmt.Printf("Adding RECEIPT: %d, USER: %d\n", ru.ReceiptID, ru.UserID)
+		if err := s.Store.CreateReceiptUsers(ctx, ru); err != nil {
+			return fmt.Errorf("could not seed receipts_users: %w", err)
+		}
+	}
+
 	fmt.Println("🍃database seeded!")
 
 	return nil
@@ -50,4 +64,19 @@ type user = store.CreateUserParams
 var users []user = []user{
 	{ID: 0, Name: "jon"},
 	{ID: 1, Name: "paul"},
+}
+
+type receipt = store.CreateReceiptParams
+
+var receipts []receipt = []receipt{
+	{ItemID: 1, ItemQty: 2},
+	{ItemID: 3, ItemQty: 2},
+}
+
+type ru = store.CreateReceiptUsersParams
+
+var rus []ru = []ru{
+	{ReceiptID: 1, UserID: 0},
+	{ReceiptID: 1, UserID: 1},
+	{ReceiptID: 2, UserID: 0},
 }
