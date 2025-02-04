@@ -32,22 +32,24 @@ type ListModel struct {
 	actionFuncs map[ListAction]func() tea.Cmd
 }
 
-func (i *ListModel) Init() tea.Cmd {
+func (i ListModel) Init() tea.Cmd {
 	return tea.Batch(i.table.Init())
 }
 
-func (lm *ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (lm ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
 			return lm, tea.Quit
+		case "esc":
+			lm.state = table
 		}
 	}
 	return lm, nil
 }
 
-func (lm *ListModel) View() string {
+func (lm ListModel) View() string {
 	switch lm.state {
 	case form:
 		if lm.form.State == huh.StateCompleted {
@@ -61,7 +63,7 @@ func (lm *ListModel) View() string {
 	}
 }
 
-func (i *ListModel) RegisterAction(la ListAction, f func() tea.Cmd) {
+func (i ListModel) RegisterAction(la ListAction, f func() tea.Cmd) {
 	i.actionFuncs[la] = f
 }
 

@@ -7,16 +7,11 @@ import (
 
 func (i *ItemModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
-
 	// SHARED UPDATE
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c":
-			return i, tea.Quit
-		case "esc":
-			i.state = table
-		}
+	m, cmd := i.ListModel.Update(msg)
+	if mm, ok := m.(ListModel); ok {
+		i.ListModel = mm
+		cmds = append(cmds, cmd)
 	}
 
 	// STATE UPDATE
