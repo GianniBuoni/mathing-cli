@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/charmbracelet/huh"
 )
@@ -24,7 +26,6 @@ func (i *ItemStore) GetTable(ctx context.Context, pageOffset int64) (
 	if err != nil {
 		return nil, nil, fmt.Errorf("GetTable issue getting item data: %w", err)
 	}
-
 	for _, v := range items {
 		row := []string{
 			v.Item,
@@ -32,7 +33,6 @@ func (i *ItemStore) GetTable(ctx context.Context, pageOffset int64) (
 		}
 		data = append(data, row)
 	}
-
 	headers = []string{"NAME", "PRICE"}
 	return headers, data, err
 }
@@ -54,11 +54,11 @@ func (i *ItemStore) CountRows(ctx context.Context) (
 func (i *ItemStore) Post(
 	ctx context.Context, item Item,
 ) error {
-	params := CreateItemParams{}
-	params.ID = item.ID
-	params.Item = item.Item
-	params.Price = item.Price
-
+	params := CreateItemParams{
+		ID:    item.ID,
+		Item:  item.Item,
+		Price: item.Price,
+	}
 	return i.queries.CreateItem(ctx, params)
 }
 
@@ -68,6 +68,46 @@ func (i *ItemStore) Delete(
 	return i.queries.DeleteItem(ctx, item.ID)
 }
 
-func (i *ItemStore) Parse(*huh.Form) (Item, error) { return Item{}, nil }
-func (i *ItemStore) NewForm(...Item) *huh.Form     { return huh.NewForm() }
-func (i *ItemStore) DeletFrom(Item) *huh.Form      { return huh.NewForm() }
+func (i *ItemStore) Parse(form *huh.Form, orignals ...Item) (parsed Item, err error) {
+	parsed.Item, err = CleanInput(form.GetString("item"))
+	if err != nil {
+		return Item{}, fmt.Errorf("issue parsing form data: %w", err)
+	}
+	parsed.Price, err = strconv.ParseFloat(form.GetString("price"), 64)
+	if err != nil {
+		return Item{}, fmt.Errorf("issue parsing from data: %w", err)
+	}
+	for _, original := range orignals {
+		parsed.ID = original.ID
+	}
+	if parsed.ID == 0 {
+		parsed.ID = time.Now().Unix()
+	}
+	return parsed, nil
+}
+
+func (i *ItemStore) NewForm(items ...Item) *huh.Form {
+	defaultV := Item{}
+
+	for _, i := range items {
+		defaultV = i
+	}
+	var price string
+	if defaultV.Price == 0 {
+		price = ""
+	} else {
+		price = fmt.Sprintf("%05.2f", defaultV.Price)
+	}
+	return huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().Title("ITEM NAME?").Key("item").Value(&defaultV.Item),
+			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price").Value(&price),
+			huh.NewConfirm().Affirmative("Submit").Negative("Cancel").Key("confirm"),
+		).
+			WithTheme(huh.ThemeDracula()),
+	)
+}
+
+func (i *ItemStore) DeletFrom(item Item) *huh.Form {
+	return DeleteForm(fmt.Sprintf("%s", item.Item))
+}

@@ -1,9 +1,7 @@
 package lib
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/charmbracelet/huh"
 )
@@ -12,12 +10,6 @@ type LoopOpts struct {
 	Repl bool
 }
 
-func IsFloat(s string) error {
-	if _, err := strconv.ParseFloat(s, 64); err != nil {
-		return errors.New("inputted price is not a float")
-	}
-	return nil
-}
 func WithRepl(b bool) func(*LoopOpts) {
 	return func(lo *LoopOpts) { lo.Repl = b }
 }

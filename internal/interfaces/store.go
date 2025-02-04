@@ -14,7 +14,7 @@ type Store[T any] interface {
 	Delete(context.Context, T) error
 
 	// forms
-	Parse(*huh.Form) (T, error)
+	Parse(*huh.Form, ...T) (T, error)
 	NewForm(...T) *huh.Form
 	DeletFrom(T) *huh.Form
 }

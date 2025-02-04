@@ -21,11 +21,18 @@ func (lm *ListModel[T]) DeleteInit(t T) tea.Cmd {
 }
 
 func (lm *ListModel[T]) Post() tea.Cmd {
-	res, err := lm.store.Parse(lm.form)
+	var (
+		res T
+		err error
+	)
+	if lm.action == create {
+		res, err = lm.store.Parse(lm.form)
+	} else {
+		res, err = lm.store.Parse(lm.form, lm.GetCurrent())
+	}
 	if err != nil {
 		return tea.Println(err)
 	}
-
 	err = lm.store.Post(context.Background(), res)
 	if err != nil {
 		return tea.Println(err)
