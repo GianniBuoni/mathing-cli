@@ -26,7 +26,9 @@ WHERE id = ?;
 -- name: ListReceipt :many
 SELECT
   r.id , r.item_id, i.item as item_name, i.price as item_price, r.item_qty,
-  GROUP_CONCAT(u.name) as payee, COUNT(u.id) as payee_count
+  GROUP_CONCAT(u.name) as payee,
+  GROUP_CONCAT(u.id) as payee_id,
+  COUNT(u.id) as payee_count
 FROM receipts_users ru
 INNER JOIN receipt r
 ON ru.receipt_id= r.id
