@@ -1,11 +1,10 @@
 package commands
 
 import (
-	"context"
 	"fmt"
-	"mathing/internal/lib"
 	"mathing/internal/models"
 	"mathing/internal/store"
+	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -17,49 +16,18 @@ var list CommandData = CommandData{
 }
 
 func HandleList(s *State, cmd Command) error {
-	list := ""
-	if !(len(cmd.Args) == 1) {
-		list = lib.ListSelect()
-	} else {
-		list = cmd.Args[0]
+	tabs := []string{"RECEIPT", "ITEMS"}
+
+	receipts, _ := models.NewRecieptModel(store.NewRecieptStore(s.Store))
+	items, _ := models.NewItemModel(store.NewItemStore(s.Store))
+
+	tabContent := []tea.Model{receipts, items}
+
+	m := models.TabModel{Tabs: tabs, TabContent: tabContent}
+	if _, err := tea.NewProgram(m).Run(); err != nil {
+		fmt.Println("Error running program:", err)
+		os.Exit(1)
 	}
-
-	ctx := context.Background()
-	headers := []string{}
-	data := [][]string{}
-	var err error
-
-	switch list {
-	case "items":
-		m, err := models.NewItemModel(store.NewItemStore(s.Store))
-		if err != nil {
-			return err
-		}
-		p := tea.NewProgram(m)
-		if _, err = p.Run(); err != nil {
-			return err
-		}
-	case "users":
-		headers, data, err = s.Store.GetUserTable(ctx)
-		if err != nil {
-			return err
-		}
-	case "receipt":
-    m, err := models.NewRecieptModel(store.NewRecieptStore(s.Store))
-		if err != nil {
-			return err
-		}
-    p := tea.NewProgram(m)
-    if _, err = p.Run(); err != nil {
-      return err
-    }
-	default:
-		return lib.NoTableError(list)
-	}
-
-	t := lib.NewTable(headers, data)
-
-	fmt.Println(t)
 
 	return nil
 }

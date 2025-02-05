@@ -27,12 +27,16 @@ const (
 )
 
 var (
-	PromptStyle = lipgloss.NewStyle().
+	ActiveTabStyle = lipgloss.NewStyle().
 			Bold(true).
-			Italic(true).
 			Foreground(lipgloss.Color(bg)).
 			Background(lipgloss.Color(orange)).
-			Padding(0, 1)
+			Padding(0, 1).Margin(0, 1)
+	TabStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color(bg)).
+			Background(lipgloss.Color(purple)).
+			Padding(0, 1).Margin(0, 1)
 	HintStyle = lipgloss.NewStyle().
 			Italic(true).
 			Foreground(lipgloss.Color(bg3))
@@ -40,12 +44,12 @@ var (
 			Bold(true).
 			Foreground(lipgloss.Color(pink))
 	TableStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color(green))
+			Foreground(lipgloss.Color(orange))
 	HeaderStyle = lipgloss.NewStyle().
 			Align(lipgloss.Center).
 			Bold(true).
 			Padding(0, 1).
-			Foreground(lipgloss.Color(green))
+			Foreground(lipgloss.Color(orange))
 	NormalStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(fg))
 )
