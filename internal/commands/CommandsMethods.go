@@ -20,7 +20,7 @@ func (c *Commands) Run(s *State, cmd Command) error {
 
 func (c *Commands) Load() {
 	commands := []CommandData{
-		seed, help, list, newRow,
+		seed, help, list, newRow, calc,
 	}
 
 	for _, command := range commands {
