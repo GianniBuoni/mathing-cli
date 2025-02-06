@@ -1,7 +1,7 @@
 -- name: CreateReceipt :exec
 INSERT INTO receipt (
-  item_id, item_qty
-) VALUES ( ?, ? )
+  id, item_id, item_qty
+) VALUES ( ?, ?, ? )
   ON CONFLICT (item_id) DO UPDATE
   SET item_qty = excluded.item_qty;
 

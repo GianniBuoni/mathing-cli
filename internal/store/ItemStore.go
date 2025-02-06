@@ -92,20 +92,9 @@ func (i *ItemStore) NewForm(items ...Item) *huh.Form {
 	for _, i := range items {
 		defaultV = i
 	}
-	var price string
-	if defaultV.Price == 0 {
-		price = ""
-	} else {
-		price = fmt.Sprintf("%05.2f", defaultV.Price)
-	}
 	return huh.NewForm(
-		huh.NewGroup(
-			huh.NewInput().Title("ITEM NAME?").Key("item").Value(&defaultV.Item),
-			huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price").Value(&price),
-			huh.NewConfirm().Affirmative("Submit").Negative("Cancel").Key("confirm"),
-		).
-			WithTheme(huh.ThemeDracula()),
-	)
+		newItemPrompt(defaultV),
+	).WithTheme(huh.ThemeDracula())
 }
 
 func (i *ItemStore) DeletFrom(item Item) *huh.Form {

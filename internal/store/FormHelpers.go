@@ -13,6 +13,13 @@ func CleanInput(text string) (string, error) {
 	return strings.ToLower(strings.TrimSpace(text)), nil
 }
 
+func IsInt(s string) error {
+	if _, err := strconv.ParseInt(s, 10, 64); err != nil {
+		return errors.New("inputted price is not a integer")
+	}
+	return nil
+}
+
 func IsFloat(s string) error {
 	if _, err := strconv.ParseFloat(s, 64); err != nil {
 		return errors.New("inputted price is not a float")
@@ -35,6 +42,10 @@ func PayeeIDToUserID(pid string) (uids []int64, err error) {
 	return uids, nil
 }
 
+func UserIDToPayeeID(uid []string) string {
+  return strings.Join(uid, ",")
+}
+
 func DeleteForm(title string) *huh.Form {
 	return huh.NewForm(
 		huh.NewGroup(
@@ -44,5 +55,19 @@ func DeleteForm(title string) *huh.Form {
 				Negative("Nah").
 				Title(fmt.Sprintf("Delete %s?", title)),
 		),
+	)
+}
+
+func newItemPrompt(i Item) *huh.Group {
+	var price string
+	if i.Price == 0 {
+		price = ""
+	} else {
+		price = fmt.Sprintf("%05.2f", i.Price)
+	}
+	return huh.NewGroup(
+		huh.NewInput().Title("ITEM NAME?").Key("item").Value(&i.Item),
+		huh.NewInput().Title("ITEM PRICE?").Validate(IsFloat).Key("price").Value(&price),
+		huh.NewConfirm().Affirmative("Submit").Negative("Cancel").Key("confirm"),
 	)
 }

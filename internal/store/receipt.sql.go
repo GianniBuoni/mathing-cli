@@ -37,19 +37,20 @@ func (q *Queries) CountReceipt(ctx context.Context) (int64, error) {
 
 const createReceipt = `-- name: CreateReceipt :exec
 INSERT INTO receipt (
-  item_id, item_qty
-) VALUES ( ?, ? )
+  id, item_id, item_qty
+) VALUES ( ?, ?, ? )
   ON CONFLICT (item_id) DO UPDATE
   SET item_qty = excluded.item_qty
 `
 
 type CreateReceiptParams struct {
+	ID      int64
 	ItemID  int64
 	ItemQty int64
 }
 
 func (q *Queries) CreateReceipt(ctx context.Context, arg CreateReceiptParams) error {
-	_, err := q.db.ExecContext(ctx, createReceipt, arg.ItemID, arg.ItemQty)
+	_, err := q.db.ExecContext(ctx, createReceipt, arg.ID, arg.ItemID, arg.ItemQty)
 	return err
 }
 

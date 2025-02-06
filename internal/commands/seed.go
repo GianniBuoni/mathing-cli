@@ -69,8 +69,8 @@ var users []user = []user{
 type receipt = store.CreateReceiptParams
 
 var receipts []receipt = []receipt{
-	{ItemID: 2, ItemQty: 2},
-	{ItemID: 1, ItemQty: 2},
+  {ID: 1, ItemID: 2, ItemQty: 2},
+  {ID: 2, ItemID: 1, ItemQty: 2},
 }
 
 type ru = store.CreateReceiptUsersParams
