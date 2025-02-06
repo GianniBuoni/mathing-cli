@@ -34,8 +34,7 @@ var (
 			Padding(0, 1).Margin(0, 1)
 	TabStyle = lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color(bg)).
-			Background(lipgloss.Color(purple)).
+			Foreground(lipgloss.Color(purple)).
 			Padding(0, 1).Margin(0, 1)
 	HintStyle = lipgloss.NewStyle().
 			Italic(true).

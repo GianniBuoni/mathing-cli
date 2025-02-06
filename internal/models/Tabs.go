@@ -72,7 +72,6 @@ func (m TabModel) View() string {
 		}
 		renderedTabs = append(renderedTabs, tabStyle.Render(t))
 	}
-
 	row := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)
 	doc.WriteString(row)
 	doc.WriteString("\n\n")

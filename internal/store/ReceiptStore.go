@@ -87,8 +87,15 @@ func (r *RecieptStore) Parse(*huh.Form, ...ListReceiptRow) (
 }
 
 func (r *RecieptStore) NewForm(...ListReceiptRow) *huh.Form {
-	return huh.NewForm()
+	items, _ := r.queries.ListItems(context.Background(), 0)
+	itemNames := []string{}
+	for _, i := range items {
+		itemNames = append(itemNames, i.Item)
+	}
+	return huh.NewForm(
+		huh.NewGroup(),
+	)
 }
-func (r *RecieptStore) DeletFrom(ListReceiptRow) *huh.Form {
-	return huh.NewForm()
+func (r *RecieptStore) DeletFrom(llr ListReceiptRow) *huh.Form {
+	return DeleteForm(fmt.Sprintf("%s", llr.ItemName))
 }

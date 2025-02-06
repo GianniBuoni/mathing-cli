@@ -76,8 +76,6 @@ func (lm *ListModel[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if t, ok := table.(*TableData); ok {
 			lm.table = t
 			cmds = append(cmds, cmd)
-			cmd = lm.Refetch()
-			cmds = append(cmds, cmd)
 		}
 	}
 	return lm, tea.Batch(cmds...)

@@ -22,7 +22,7 @@ func (t *TableData) View() string {
 			"(a) Add Item" + middot +
 			"(d) Delete Item"),
 	)
-	s += fmt.Sprintln(lib.HintStyle.Render("(ctrl+c) Quit"))
+	s += fmt.Sprintln(lib.HintStyle.Render("(ctrl+c) Quit" + middot + "(tab) Next Tab"))
 	s += fmt.Sprintln()
 
 	return s
