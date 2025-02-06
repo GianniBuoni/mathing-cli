@@ -79,6 +79,46 @@ func (q *Queries) DeleteReceipt(ctx context.Context, id int64) error {
 	return err
 }
 
+const getRowTotal = `-- name: GetRowTotal :many
+SELECT 
+	ru.receipt_id, ru.user_id,
+  (r.item_qty*i.price / COUNT(u.id)) as total
+FROM receipts_users ru
+INNER JOIN receipt r ON ru.receipt_id = r.id
+INNER JOIN  users u ON ru.user_id = u.id
+INNER JOIN  items i on r.item_id = i.id
+GROUP by ru.receipt_id, ru.user_id
+`
+
+type GetRowTotalRow struct {
+	ReceiptID int64
+	UserID    int64
+	Total     interface{}
+}
+
+func (q *Queries) GetRowTotal(ctx context.Context) ([]GetRowTotalRow, error) {
+	rows, err := q.db.QueryContext(ctx, getRowTotal)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetRowTotalRow
+	for rows.Next() {
+		var i GetRowTotalRow
+		if err := rows.Scan(&i.ReceiptID, &i.UserID, &i.Total); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listReceipt = `-- name: ListReceipt :many
 SELECT
   r.id , r.item_id, i.item as item_name, i.price as item_price, r.item_qty,

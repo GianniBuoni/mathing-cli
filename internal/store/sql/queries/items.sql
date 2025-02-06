@@ -8,6 +8,9 @@ INSERT INTO items (
 -- name: ListItems :many
 SELECT * FROM items LIMIT 20 OFFSET ?;
 
+-- name: ListAllItems :many
+SELECT * FROM items;
+
 -- name: GetItem :one
 SELECT * FROM items WHERE id = ?;
 

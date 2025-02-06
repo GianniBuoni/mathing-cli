@@ -60,6 +60,33 @@ func (q *Queries) GetItem(ctx context.Context, id int64) (Item, error) {
 	return i, err
 }
 
+const listAllItems = `-- name: ListAllItems :many
+SELECT id, item, price FROM items
+`
+
+func (q *Queries) ListAllItems(ctx context.Context) ([]Item, error) {
+	rows, err := q.db.QueryContext(ctx, listAllItems)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Item
+	for rows.Next() {
+		var i Item
+		if err := rows.Scan(&i.ID, &i.Item, &i.Price); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listItems = `-- name: ListItems :many
 SELECT id, item, price FROM items LIMIT 20 OFFSET ?
 `

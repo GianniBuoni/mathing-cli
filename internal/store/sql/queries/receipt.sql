@@ -38,3 +38,13 @@ INNER JOIN items i
 ON r.item_id = i.id
 GROUP BY r.id
 LIMIT 20 OFFSET ?;
+
+-- name: GetRowTotal :many
+SELECT 
+	ru.receipt_id, ru.user_id,
+  (r.item_qty*i.price / COUNT(u.id)) as total
+FROM receipts_users ru
+INNER JOIN receipt r ON ru.receipt_id = r.id
+INNER JOIN  users u ON ru.user_id = u.id
+INNER JOIN  items i on r.item_id = i.id
+GROUP by ru.receipt_id, ru.user_id;
