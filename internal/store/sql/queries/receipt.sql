@@ -6,12 +6,16 @@ INSERT INTO receipt (
   SET item_qty = excluded.item_qty;
 
 -- name: CreateReceiptUsers :exec
-INSERT INTO receipts_users (
+INSERT OR IGNORE INTO receipts_users (
   receipt_id, user_id
 ) VALUES ( ?, ? );
 
 -- name: CountReceipt :one
 SELECT count(*) FROM receipt;
+
+-- name: CountPayees :one
+SELECT count(*) FROM receipts_users
+GROUP BY receipt_id;
 
 -- name: CalcReceiptTotal :one
 SELECT sum(i.price * r.item_qty) as calced_total
@@ -22,6 +26,10 @@ ON r.item_id = i.id;
 -- name: DeleteReceipt :exec
 DELETE FROM receipt
 WHERE id = ?;
+
+-- name: DeleteRecietsUsers :exec
+DELETE FROM receipts_users
+WHERE receipt_id = ?;
 
 -- name: ListReceipt :many
 SELECT

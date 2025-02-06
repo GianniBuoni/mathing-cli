@@ -24,6 +24,18 @@ func (q *Queries) CalcReceiptTotal(ctx context.Context) (sql.NullFloat64, error)
 	return calced_total, err
 }
 
+const countPayees = `-- name: CountPayees :one
+SELECT count(*) FROM receipts_users
+GROUP BY receipt_id
+`
+
+func (q *Queries) CountPayees(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countPayees)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countReceipt = `-- name: CountReceipt :one
 SELECT count(*) FROM receipt
 `
@@ -55,7 +67,7 @@ func (q *Queries) CreateReceipt(ctx context.Context, arg CreateReceiptParams) er
 }
 
 const createReceiptUsers = `-- name: CreateReceiptUsers :exec
-INSERT INTO receipts_users (
+INSERT OR IGNORE INTO receipts_users (
   receipt_id, user_id
 ) VALUES ( ?, ? )
 `
@@ -77,6 +89,16 @@ WHERE id = ?
 
 func (q *Queries) DeleteReceipt(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteReceipt, id)
+	return err
+}
+
+const deleteRecietsUsers = `-- name: DeleteRecietsUsers :exec
+DELETE FROM receipts_users
+WHERE receipt_id = ?
+`
+
+func (q *Queries) DeleteRecietsUsers(ctx context.Context, receiptID int64) error {
+	_, err := q.db.ExecContext(ctx, deleteRecietsUsers, receiptID)
 	return err
 }
 

@@ -35,12 +35,6 @@ func (m TabModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.activeTab = 0
 			}
 			return m, nil
-		case "shift+tab":
-			if m.activeTab > 0 {
-				m.activeTab--
-			} else {
-				m.activeTab = len(m.Tabs) - 1
-			}
 		}
 	}
 	m.TabContent[m.activeTab], cmd = m.TabContent[m.activeTab].Update(msg)
