@@ -75,6 +75,7 @@ func (r *RecieptStore) Parse(form *huh.Form, original ...ListReceiptRow) (
 
 	for _, r := range original {
 		lrr.ID = r.ID
+    lrr.PayeeCount = r.PayeeCount
 	}
 
 	return lrr, nil

@@ -23,15 +23,11 @@ func (r *RecieptStore) Post(ctx context.Context, lrr ListReceiptRow) error {
 	}
 
   // delete receipts_users rows if there's a count mismatch
-  currnetPayeeCount, err := r.queries.CountPayees(ctx)
-  if err != nil {
-    return err
-  }
 	userIDs, err := PayeeIDToUserID(lrr.PayeeID)
 	if err != nil {
 		return err
 	}
-  if int(currnetPayeeCount) > len(userIDs) {
+  if int(lrr.PayeeCount) > len(userIDs) {
     err := r.queries.DeleteRecietsUsers(ctx, lrr.ID)
     if err != nil {
       return err

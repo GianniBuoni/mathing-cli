@@ -13,16 +13,6 @@ INSERT OR IGNORE INTO receipts_users (
 -- name: CountReceipt :one
 SELECT count(*) FROM receipt;
 
--- name: CountPayees :one
-SELECT count(*) FROM receipts_users
-GROUP BY receipt_id;
-
--- name: CalcReceiptTotal :one
-SELECT sum(i.price * r.item_qty) as calced_total
-FROM receipt r
-INNER JOIN items i
-ON r.item_id = i.id;
-
 -- name: DeleteReceipt :exec
 DELETE FROM receipt
 WHERE id = ?;
@@ -49,10 +39,11 @@ LIMIT 20 OFFSET ?;
 
 -- name: GetRowTotal :many
 SELECT 
-	ru.receipt_id, ru.user_id,
-  (r.item_qty*i.price / COUNT(u.id)) as total
+	ru.receipt_id,
+  GROUP_CONCAT(ru.user_id) as payees,
+  (r.item_qty*i.price / COUNT(ru.user_id)) as total
 FROM receipts_users ru
 INNER JOIN receipt r ON ru.receipt_id = r.id
 INNER JOIN  users u ON ru.user_id = u.id
 INNER JOIN  items i on r.item_id = i.id
-GROUP by ru.receipt_id, ru.user_id;
+GROUP by ru.receipt_id;

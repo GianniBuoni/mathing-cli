@@ -7,34 +7,7 @@ package store
 
 import (
 	"context"
-	"database/sql"
 )
-
-const calcReceiptTotal = `-- name: CalcReceiptTotal :one
-SELECT sum(i.price * r.item_qty) as calced_total
-FROM receipt r
-INNER JOIN items i
-ON r.item_id = i.id
-`
-
-func (q *Queries) CalcReceiptTotal(ctx context.Context) (sql.NullFloat64, error) {
-	row := q.db.QueryRowContext(ctx, calcReceiptTotal)
-	var calced_total sql.NullFloat64
-	err := row.Scan(&calced_total)
-	return calced_total, err
-}
-
-const countPayees = `-- name: CountPayees :one
-SELECT count(*) FROM receipts_users
-GROUP BY receipt_id
-`
-
-func (q *Queries) CountPayees(ctx context.Context) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countPayees)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
 
 const countReceipt = `-- name: CountReceipt :one
 SELECT count(*) FROM receipt
@@ -104,18 +77,19 @@ func (q *Queries) DeleteRecietsUsers(ctx context.Context, receiptID int64) error
 
 const getRowTotal = `-- name: GetRowTotal :many
 SELECT 
-	ru.receipt_id, ru.user_id,
-  (r.item_qty*i.price / COUNT(u.id)) as total
+	ru.receipt_id,
+  GROUP_CONCAT(ru.user_id) as payees,
+  (r.item_qty*i.price / COUNT(ru.user_id)) as total
 FROM receipts_users ru
 INNER JOIN receipt r ON ru.receipt_id = r.id
 INNER JOIN  users u ON ru.user_id = u.id
 INNER JOIN  items i on r.item_id = i.id
-GROUP by ru.receipt_id, ru.user_id
+GROUP by ru.receipt_id
 `
 
 type GetRowTotalRow struct {
 	ReceiptID int64
-	UserID    int64
+	Payees    string
 	Total     interface{}
 }
 
@@ -128,7 +102,7 @@ func (q *Queries) GetRowTotal(ctx context.Context) ([]GetRowTotalRow, error) {
 	var items []GetRowTotalRow
 	for rows.Next() {
 		var i GetRowTotalRow
-		if err := rows.Scan(&i.ReceiptID, &i.UserID, &i.Total); err != nil {
+		if err := rows.Scan(&i.ReceiptID, &i.Payees, &i.Total); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
