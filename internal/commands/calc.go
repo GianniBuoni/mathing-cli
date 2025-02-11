@@ -43,12 +43,15 @@ func HandleCalc(s *State, cmd Command) error {
 		}
 
 	}
+	var grandTotal float64
 	for k, v := range totals {
 		user, err := s.Store.GetUser(ctx, k)
 		if err != nil {
 			return fmt.Errorf("issue getting users %w", err)
 		}
+		grandTotal += v
 		fmt.Printf("%s: %05.2f\n", user.Name, v)
 	}
+	fmt.Printf("TOTAL: %05.2f\n", grandTotal)
 	return nil
 }
