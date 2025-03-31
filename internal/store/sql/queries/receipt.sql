@@ -21,6 +21,9 @@ WHERE id = ?;
 DELETE FROM receipts_users
 WHERE receipt_id = ?;
 
+-- name: ResetReciept :exec
+DELETE FROM receipt;
+
 -- name: ListReceipt :many
 SELECT
   r.id , r.item_id, i.item as item_name, i.price as item_price, r.item_qty,

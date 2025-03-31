@@ -62,6 +62,7 @@ func (q *Queries) GetItem(ctx context.Context, id int64) (Item, error) {
 
 const listAllItems = `-- name: ListAllItems :many
 SELECT id, item, price FROM items
+ORDER BY item
 `
 
 func (q *Queries) ListAllItems(ctx context.Context) ([]Item, error) {

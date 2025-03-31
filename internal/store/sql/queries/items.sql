@@ -9,7 +9,8 @@ INSERT INTO items (
 SELECT * FROM items LIMIT 20 OFFSET ?;
 
 -- name: ListAllItems :many
-SELECT * FROM items;
+SELECT * FROM items
+ORDER BY item;
 
 -- name: GetItem :one
 SELECT * FROM items WHERE id = ?;
