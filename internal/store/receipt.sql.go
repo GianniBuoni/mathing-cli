@@ -176,11 +176,11 @@ func (q *Queries) ListReceipt(ctx context.Context, offset int64) ([]ListReceiptR
 	return items, nil
 }
 
-const resetReciept = `-- name: ResetReciept :exec
+const resetReceipt = `-- name: ResetReceipt :exec
 DELETE FROM receipt
 `
 
-func (q *Queries) ResetReciept(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, resetReciept)
+func (q *Queries) ResetReceipt(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, resetReceipt)
 	return err
 }

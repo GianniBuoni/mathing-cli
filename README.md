@@ -30,9 +30,9 @@ Development Commands:
 
 ## ✅ TO DO
 
-- [ ] Rework the receipt form/builder to be able to filter through all the available items.
+- [x] Rework the receipt form/builder to be able to filter through all the available items.
 - [ ] Rework how the TUI handles the table data refreshing. Currently, displayed data can become unsynced with db data.
 - [ ] Integrate the calc command into the TUI or create a pane of live calcs.
 - [ ] Move SQLite db to somewhere in $HOME.
-- [ ] Reset command to clean out table data / create the option to build a new receipt from scratch.
+- [x] Reset command to clean out table data / create the option to build a new receipt from scratch.
 - [ ] Receipt history. Command to write calc results to a CSV or another table.

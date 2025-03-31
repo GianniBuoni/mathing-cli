@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"mathing/internal/lib"
 	"mathing/internal/store"
 )
@@ -24,6 +25,10 @@ func HandleNew(s *State, cmd Command) error {
 		if err := lib.NewItemLoop(
 			store.NewItemStore(s.Store), lib.WithRepl(true),
 		); err != nil {
+			return err
+		}
+	case "receipt":
+		if err := s.Store.ResetReceipt(context.Background()); err != nil {
 			return err
 		}
 	default:

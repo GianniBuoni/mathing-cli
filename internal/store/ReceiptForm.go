@@ -9,10 +9,10 @@ import (
 )
 
 func (r *RecieptStore) NewForm(original ...ListReceiptRow) *huh.Form {
-  defaultValues := ListReceiptRow{}
-  for _, lrr := range original {
-    defaultValues = lrr
-  }
+	defaultValues := ListReceiptRow{}
+	for _, lrr := range original {
+		defaultValues = lrr
+	}
 
 	// set default qty value
 	var defaultQty string
@@ -33,24 +33,25 @@ func (r *RecieptStore) NewForm(original ...ListReceiptRow) *huh.Form {
 		}
 		itemNames = append(itemNames, option)
 	}
-  
-  // get user choices
+
+	// get user choices
 	users, _ := r.queries.ListUsers(ctx)
 	userNames := []huh.Option[string]{}
-  defaultUsers, _ := PayeeIDToUserID(defaultValues.PayeeID)
+	defaultUsers, _ := PayeeIDToUserID(defaultValues.PayeeID)
 
 	for _, u := range users {
-    option := huh.NewOption(u.Name, fmt.Sprintf("%d", u.ID))
+		option := huh.NewOption(u.Name, fmt.Sprintf("%d", u.ID))
 		// parse whether original receipt item had them selected
-    if slices.Contains(defaultUsers, u.ID) {
-      option = option.Selected(true)
-    }
+		if slices.Contains(defaultUsers, u.ID) {
+			option = option.Selected(true)
+		}
 		userNames = append(userNames, option)
 	}
 	return huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[int64]().
 				Title("Add item").
+				Height(20).
 				Options(itemNames...).Key("item"),
 			huh.NewConfirm().
 				Title("Continue?").
@@ -67,4 +68,3 @@ func (r *RecieptStore) NewForm(original ...ListReceiptRow) *huh.Form {
 		),
 	).WithTheme(huh.ThemeDracula())
 }
-

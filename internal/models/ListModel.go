@@ -39,6 +39,7 @@ func (lm *ListModel[T]) Init() tea.Cmd {
 
 func (lm *ListModel[T]) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
+	lm.Refetch()
 
 	// SHARED UPDATE
 	switch msg := msg.(type) {
