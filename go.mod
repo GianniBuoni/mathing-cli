@@ -1,6 +1,6 @@
 module mathing
 
-go 1.23.4
+go 1.23.3
 
 require (
 	github.com/charmbracelet/bubbletea v1.1.0
