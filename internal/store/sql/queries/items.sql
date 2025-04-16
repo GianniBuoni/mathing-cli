@@ -6,7 +6,7 @@ INSERT INTO items (
   SET item = excluded.item, price = excluded.price;
 
 -- name: ListItems :many
-SELECT * FROM items LIMIT 20 OFFSET ?;
+SELECT * FROM items ORDER BY item LIMIT 20 OFFSET ? ;
 
 -- name: ListAllItems :many
 SELECT * FROM items

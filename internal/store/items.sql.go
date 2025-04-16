@@ -61,6 +61,8 @@ func (q *Queries) GetItem(ctx context.Context, id int64) (Item, error) {
 }
 
 const listAllItems = `-- name: ListAllItems :many
+;
+
 SELECT id, item, price FROM items
 ORDER BY item
 `
@@ -89,7 +91,7 @@ func (q *Queries) ListAllItems(ctx context.Context) ([]Item, error) {
 }
 
 const listItems = `-- name: ListItems :many
-SELECT id, item, price FROM items LIMIT 20 OFFSET ?
+SELECT id, item, price FROM items ORDER BY item LIMIT 20 OFFSET ?
 `
 
 func (q *Queries) ListItems(ctx context.Context, offset int64) ([]Item, error) {
